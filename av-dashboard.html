@@ -138,8 +138,7 @@
             .projection(function (d) { return [d.y, d.x]; });
         
         d3.select("body").append("p")
-            .text("To change a node, click the text and edit the input box below.")
-            .append("input").attr("class", "nodeChange")
+            .text("To change a node, click the text and edit the input box.")
 
         var svg = d3.select("body").append("svg")
             .attr("width", width + margin.right + margin.left)
@@ -195,8 +194,8 @@
                     return 12 * i
                 })
                 .on("click", handleMouseClick)
-            // .on("mouseover",handleMouseOver)
-            // .on("mouseout",handleMouseOut)
+            .on("mouseover",handleMouseOver)
+            .on("mouseout",handleMouseOut)
 
             // Declare the links…
             var link = svg.selectAll("path.link")
@@ -209,14 +208,6 @@
         }
 
         function handleMouseClick(d, field) {
-            //Change the color when clicked
-            d3.selectAll("text").style("fill", "black")
-            if (d3.select(this).style('fill') == "rgb(255, 140, 0)") {
-                d3.select(this).style('fill', 'black');
-            } else {
-                d3.select(this).style('fill', 'darkOrange');
-            }
-
             //Remove previous input boxes
             let toRemove = document.getElementsByClassName("overlayText")[0]
             if (toRemove != undefined) {
@@ -243,13 +234,11 @@
         }
 
         function handleMouseOver(d, field) {
-            console.log(this)
-            d3.select("body").append("input")
-
+            d3.select(this).style('fill', 'darkOrange');
         }
 
         function handleMouseOut(d, field) {
-            console.log(this)
+            d3.select(this).style('fill', 'black');
         }
     }
 </script>
