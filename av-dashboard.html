@@ -2,8 +2,9 @@
 <script src="https://d3js.org/d3.v5.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 <h1>
-Traffic Control Dashboard
+    Traffic Control Dashboard
 </h1>
+
 <body>
     <label for="file-selector">Upload a dotfile:</label>
     <input type="file" id="file-selector" accept=".dot">
@@ -14,6 +15,7 @@ Traffic Control Dashboard
     html {
         font-family: Arial, Helvetica, sans-serif
     }
+
     .node {
         cursor: pointer;
     }
@@ -97,6 +99,11 @@ Traffic Control Dashboard
         return result
     }
 
+    function moveNode(node, newParent, treeData) {
+        //Locate the node (will this input be an id?)
+
+    }
+
     function graphToTree(nodes, edges, head) {
         let result = {}
 
@@ -114,6 +121,8 @@ Traffic Control Dashboard
 
     // ************** Generate the tree diagram	 *****************
     function drawTree(treeData) {
+        console.log("Tree Data:")
+        console.log(treeData)
         var margin = { top: 20, right: 120, bottom: 20, left: 120 },
             width = 960 - margin.right - margin.left,
             height = 500 - margin.top - margin.bottom;
@@ -181,8 +190,9 @@ Traffic Control Dashboard
                 .attr("dy", function (d, i) {
                     return 12 * i
                 })
-                .on("mouseover",handleMouseOver)
-                .on("mouseout",handleMouseOut)
+                .on("click", handleMouseClick)
+            // .on("mouseover",handleMouseOver)
+            // .on("mouseout",handleMouseOut)
 
             // Declare the links…
             var link = svg.selectAll("path.link")
@@ -194,12 +204,23 @@ Traffic Control Dashboard
                 .attr("d", diagonal);
         }
 
-        function handleMouseOver(d, field){
-            console.log(this)
+        function handleMouseClick(d, field) {
+            console.log(d3.select(this).style('fill'))
+            if (d3.select(this).style('fill') == "rgb(255, 140, 0)") {
+                d3.select(this).style('fill', 'black');
+            } else {
+                d3.select(this).style('fill', 'darkOrange');
+            }
         }
 
-        function handleMouseOut(d, field){
+        function handleMouseOver(d, field) {
             console.log(this)
-        }           
+            d3.select("body").append("input")
+
+        }
+
+        function handleMouseOut(d, field) {
+            console.log(this)
+        }
     }
 </script>
