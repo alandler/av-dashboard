@@ -136,13 +136,17 @@
 
         var diagonal = d3.svg.diagonal()
             .projection(function (d) { return [d.y, d.x]; });
+        
+        d3.select("body").append("p")
+            .text("To change a node, click the text and edit the input box below.")
+            .append("input").attr("class", "nodeChange")
 
         var svg = d3.select("body").append("svg")
             .attr("width", width + margin.right + margin.left)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+        
         root = treeData[0];
         root.x0 = height / 2;
         root.y0 = 0;
@@ -205,12 +209,37 @@
         }
 
         function handleMouseClick(d, field) {
-            console.log(d3.select(this).style('fill'))
+            //Change the color when clicked
+            d3.selectAll("text").style("fill", "black")
             if (d3.select(this).style('fill') == "rgb(255, 140, 0)") {
                 d3.select(this).style('fill', 'black');
             } else {
                 d3.select(this).style('fill', 'darkOrange');
             }
+
+            //Remove previous input boxes
+            let toRemove = document.getElementsByClassName("overlayText")[0]
+            if (toRemove != undefined) {
+                toRemove.parentNode.removeChild(toRemove);
+            }
+            
+            //Get coordinates
+            var rect = this.getBoundingClientRect()
+            console.log(rect)
+
+            //Set up input over the svg
+            var input = document.createElement("input");
+            input.type = "text";
+            input.className = "overlayText"
+            input.style.zIndex = 2
+            input.style.position = "absolute"
+            input.style.left = rect.x+'px'
+            input.style.top = rect.y+'px'
+            input.style.width = rect.width+'px'
+            input.style.height = rect.height+'px'
+            input.style.fontSize = 8+'px'
+            input.value = d
+            document.body.appendChild(input); 
         }
 
         function handleMouseOver(d, field) {
