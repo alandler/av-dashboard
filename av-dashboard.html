@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3.v6.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 <h1>
     Traffic Control Dashboard
@@ -9,6 +9,18 @@
     <label for="file-selector">Upload a dotfile:</label>
     <input type="file" id="file-selector" accept=".dot">
     <div id="output"></div>
+    <form id="newParentForm">
+        <h3>Create Parent Node</h3>
+
+        <label for="parentNode"><b>Parent node label</b></label>
+        <input type="text" placeholder="Enter label" name="parentNode" required>
+
+        <label for="childNode"><b>Child node label</b></label>
+        <input type="text" placeholder="Enter label" name="childNode" required>
+
+        <button type="submit" class="btn">Submit</button>
+        <button class="btn cancel" id = "closeParentForm">Close</button>
+    </form>
 </body>
 
 <style>
@@ -35,15 +47,35 @@
         stroke: #ccc;
         stroke-width: 2px;
     }
+
+    form{
+        padding: 15px;
+        padding-top: 5px;
+        color: white;
+        background: darkgrey;
+    }
+
+    #newParentForm {
+        display: none;
+    }
 </style>
 
 <script>
+    // ************** Global variables	 *****************
+    let nodes = {}
+    let edges = {}
+    let head = null
     let treeData = {}
 
+    // ************** Event listeners	 *****************
     const inputFileDiv = document.getElementById("file-selector")
-
     inputFileDiv.addEventListener('input', readFile)
+    const parentNodeForm = document.getElementById("newParentForm")
+    parentNodeForm.addEventListener('submit', addNewRoot)
+    const closeParentForm = document.getElementById("closeParentForm")
+    closeParentForm.addEventListener('submit', closeForm)
 
+    // ************** DOTFILE Parsing	 *****************
     function readFile(e) {
 
         file = e.target.files[0]
@@ -57,10 +89,6 @@
     }
 
     function parseDot(text) {
-        nodes = {}
-        edges = {}
-        head = null
-
         let arr = text.split("\n")
         for (let line in arr) {
             if (arr[line].includes("->")) {
@@ -69,7 +97,6 @@
                 for (let num in a) {
                     let bracket = a[num].indexOf("[")
                     if (bracket != -1) {
-                        //TODO IS IT THE HEAD
                         a[num] = a[num].substring(0, bracket)
                     }
                     a[num] = a[num].trim()
@@ -86,7 +113,7 @@
                 attributeList[0] = attributeList[0].substring(7, attributeList[0].length)
                 s = ""
                 for (let entry of attributeList) {
-                    if (entry.includes("fillcolor")) {
+                    if (entry.includes("class")) {
                         continue
                     }
                     s += entry + "\n"
@@ -95,13 +122,35 @@
                 nodes[nodeNumber] = s
             }
         }
-        let result = graphToTree(nodes, edges, "0")
+        let headLabel = getHeadLabel(edges)
+        head = headLabel
+        let result = graphToTree(nodes, edges, headLabel)
         return result
     }
 
-    function moveNode(node, newParent, treeData) {
-        //Locate the node (will this input be an id?)
+    // ************** Form open close	 *****************
+    function openForm() {
+        document.getElementById("newParentForm").style.display = "block";
+    }
 
+    function closeForm() {
+        document.getElementById("newParentForm").style.display = "none";
+    }
+
+
+    // ************** Graph editors and extractor	 *****************
+    function getHeadLabel(edges) {
+        let possibleHeads = new Set(Object.keys(edges))
+        for (edge in edges) {
+            for (child of edges[edge]) {
+                possibleHeads.delete(child)
+            }
+        }
+        let head = null
+        for (h of possibleHeads) {
+            head = h
+        }
+        return head
     }
 
     function graphToTree(nodes, edges, head) {
@@ -119,10 +168,56 @@
         return result
     }
 
+    function updateParent(node, newParent) {
+        for (parent in edges) {
+            if (node in edges[parent]) {
+                let i = edges[parent].indexOf(node)
+                delete edges[parent][i]
+            }
+        }
+
+        edges[newParent].push(node)
+    }
+
+    function updateTree() {
+        d3.selectAll("svg").remove()
+        treeData = [graphToTree(nodes, edges, head)]
+        drawTree(treeData)
+    }
+
+    function addNewRoot(e) {
+        e.preventDefault()
+        let nodeLabel = parentNodeForm.elements[0].value;
+        let childLabel = parentNodeForm.elements[1].value;
+
+        let IDs = Object.keys(nodes).map(x => +x)
+        console.log(IDs)
+        let maxID = IDs.reduce(function (a, b) {
+            return Math.max(a, b);
+        });
+
+        console.log("MaxID:", maxID)
+
+        nodes[maxID + 1] = nodeLabel
+        nodes[maxID + 2] = childLabel
+
+        edges[maxID + 1] = [head, maxID + 2]
+
+        head = maxID + 1
+
+        console.log("New edges")
+        console.log(edges)
+        console.log("head" + head)
+
+        updateTree()
+    }
+
     // ************** Generate the tree diagram	 *****************
     function drawTree(treeData) {
+        openForm()
         console.log("Tree Data:")
         console.log(treeData)
+
         var margin = { top: 20, right: 120, bottom: 20, left: 120 },
             width = 960 - margin.right - margin.left,
             height = 500 - margin.top - margin.bottom;
@@ -136,16 +231,16 @@
 
         var diagonal = d3.svg.diagonal()
             .projection(function (d) { return [d.y, d.x]; });
-        
-        d3.select("body").append("p")
-            .text("To change a node, click the text and edit the input box.")
+
+        // d3.select("body").append("p")
+        //     .text("To change a node, click the text and edit the input box.")
 
         var svg = d3.select("body").append("svg")
             .attr("width", width + margin.right + margin.left)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        
+
         root = treeData[0];
         root.x0 = height / 2;
         root.y0 = 0;
@@ -194,8 +289,8 @@
                     return 12 * i
                 })
                 .on("click", handleMouseClick)
-            .on("mouseover",handleMouseOver)
-            .on("mouseout",handleMouseOut)
+                .on("mouseover", handleMouseOver)
+                .on("mouseout", handleMouseOut)
 
             // Declare the links…
             var link = svg.selectAll("path.link")
@@ -213,10 +308,9 @@
             if (toRemove != undefined) {
                 toRemove.parentNode.removeChild(toRemove);
             }
-            
+
             //Get coordinates
             var rect = this.getBoundingClientRect()
-            console.log(rect)
 
             //Set up input over the svg
             var input = document.createElement("input");
@@ -224,13 +318,13 @@
             input.className = "overlayText"
             input.style.zIndex = 2
             input.style.position = "absolute"
-            input.style.left = rect.x+'px'
-            input.style.top = rect.y+'px'
-            input.style.width = rect.width+'px'
-            input.style.height = rect.height+'px'
-            input.style.fontSize = 8+'px'
+            input.style.left = rect.x + 'px'
+            input.style.top = rect.y + 'px'
+            input.style.width = rect.width + 'px'
+            input.style.height = rect.height + 'px'
+            input.style.fontSize = 8 + 'px'
             input.value = d
-            document.body.appendChild(input); 
+            document.body.appendChild(input);
         }
 
         function handleMouseOver(d, field) {
