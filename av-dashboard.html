@@ -19,7 +19,7 @@
         <input type="text" placeholder="Enter label" name="childNode" required>
 
         <button type="submit" class="btn">Submit</button>
-        <button class="btn cancel" id = "closeParentForm">Close</button>
+        <button class="btn cancel" id="closeParentForm">Close</button>
     </form>
 </body>
 
@@ -48,7 +48,7 @@
         stroke-width: 2px;
     }
 
-    form{
+    form {
         padding: 15px;
         padding-top: 5px;
         color: white;
@@ -179,6 +179,15 @@
         edges[newParent].push(node)
     }
 
+    // Collapse the node and all it's children
+    function collapse(d) {
+        if (d.children) {
+            d._children = d.children
+            d._children.forEach(collapse)
+            d.children = null
+        }
+    }
+
     function updateTree() {
         d3.selectAll("svg").remove()
         treeData = [graphToTree(nodes, edges, head)]
@@ -220,7 +229,7 @@
 
         var margin = { top: 20, right: 120, bottom: 20, left: 120 },
             width = 960 - margin.right - margin.left,
-            height = 500 - margin.top - margin.bottom;
+            height = 800 - margin.top - margin.bottom;
 
         var i = 0,
             duration = 750,
@@ -229,8 +238,16 @@
         var tree = d3.layout.tree()
             .size([height, width]);
 
+        var maxDepth = d3.max(tree.nodes(treeData[0]), function (d) {
+            return +d.depth;
+        })
+        
+        height = maxDepth*200
+        width = maxDepth*250
+        tree.size([height, width])
+
         var diagonal = d3.svg.diagonal()
-            .projection(function (d) { return [d.y, d.x]; });
+            .projection(function (d) { return [d.x, d.y]; });
 
         // d3.select("body").append("p")
         //     .text("To change a node, click the text and edit the input box.")
@@ -249,9 +266,11 @@
         let dy = 20
 
         update(root);
+
         function log(sel, msg) {
             console.log(msg, sel);
         }
+
         function update(source) {
 
             // Compute the new tree layout.
@@ -269,7 +288,7 @@
             var nodeEnter = node.enter().append("g")
                 .attr("class", "node")
                 .attr("transform", function (d) {
-                    return "translate(" + d.y + "," + d.x + ")";
+                    return "translate(" + d.x + "," + d.y + ")";
                 });
 
             nodeEnter.append("g")
@@ -277,9 +296,10 @@
                     return d.children || d._children ? -13 : 13;
                 })
                 .attr("dy", ".35em")
-                .attr("text-anchor", function (d) {
-                    return d.children || d._children ? "end" : "start";
-                })
+                // .attr("text-anchor", function (d) {
+                //     return d.children || d._children ? "end" : "start";
+                // })
+                .attr("text-anchor", "middle")
                 .style("fill-opacity", 1)
                 .selectAll("text")
                 .data(d => d.name.split("\n"))
@@ -311,6 +331,8 @@
 
             //Get coordinates
             var rect = this.getBoundingClientRect()
+            var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+            var y = rect.y + scrollTop
 
             //Set up input over the svg
             var input = document.createElement("input");
@@ -319,7 +341,7 @@
             input.style.zIndex = 2
             input.style.position = "absolute"
             input.style.left = rect.x + 'px'
-            input.style.top = rect.y + 'px'
+            input.style.top =  y+'px'
             input.style.width = rect.width + 'px'
             input.style.height = rect.height + 'px'
             input.style.fontSize = 8 + 'px'
