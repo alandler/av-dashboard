@@ -241,10 +241,10 @@
         var maxDepth = d3.max(tree.nodes(treeData[0]), function (d) {
             return +d.depth;
         })
-        
-        height = maxDepth*200
-        width = maxDepth*250
-        tree.size([height, width])
+
+        // height = maxDepth*200
+        // width = maxDepth*250
+        // tree.size([height, width])
 
         var diagonal = d3.svg.diagonal()
             .projection(function (d) { return [d.x, d.y]; });
@@ -262,8 +262,9 @@
         root.x0 = height / 2;
         root.y0 = 0;
 
-        let dx = 20
-        let dy = 20
+        root.xScale = 1
+
+        root.children.forEach(collapse);
 
         update(root);
 
@@ -271,46 +272,62 @@
             console.log(msg, sel);
         }
 
-        function update(source) {
+        // Collapse the node and all its children
+        function collapse(d) {
+            if (d.children) {
+                d._children = d.children
+                d._children.forEach(collapse)
+                d.children = null
+            }
+        }
 
-            // Compute the new tree layout.
+        function update(source) {
+            let xScale = 1
+
+            // Compute the tree layout.
             var nodes = tree.nodes(root).reverse(),
                 links = tree.links(nodes);
 
             // Normalize for fixed-depth.
-            nodes.forEach(function (d) { d.y = d.depth * 180; });
+            nodes.forEach(function (d) { d.y = d.depth * 150; });
 
             // Declare the nodes…
             var node = svg.selectAll("g.node")
                 .data(nodes, function (d) { return d.id || (d.id = ++i); });
 
             // Enter the nodes.
-            var nodeEnter = node.enter().append("g")
+            var nodeEnter = node.enter()
+                .append("g")
                 .attr("class", "node")
                 .attr("transform", function (d) {
                     return "translate(" + d.x + "," + d.y + ")";
-                });
+                })
+
+            nodeEnter.append("circle")
+                .attr("cy", -15)
+                .attr("r", 5)
+                .attr("fill", d => d._children ? "#555" : "#999")
+                .attr("stroke-width", 10)
+                .on("click", collapseClick);
 
             nodeEnter.append("g")
                 .attr("x", function (d) {
+                    // return d.children || d._children ? -(200/xScale) : 200/xScale;
                     return d.children || d._children ? -13 : 13;
                 })
                 .attr("dy", ".35em")
-                // .attr("text-anchor", function (d) {
-                //     return d.children || d._children ? "end" : "start";
-                // })
                 .attr("text-anchor", "middle")
                 .style("fill-opacity", 1)
                 .selectAll("text")
-                .data(d => d.name.split("\n"))
-                .enter().append("text")
-                .text(d => d)
-                .attr("dy", function (d, i) {
-                    return 12 * i
-                })
-                .on("click", handleMouseClick)
-                .on("mouseover", handleMouseOver)
-                .on("mouseout", handleMouseOut)
+                    .data(d => d.name.split("\n"))
+                    .enter().append("text")
+                    .text(d => d)
+                    .attr("dy", function (d, i) {
+                        return 12 * i
+                    })
+                    .on("click", handleMouseClick)
+                    .on("mouseover", handleMouseOver)
+                    .on("mouseout", handleMouseOut)
 
             // Declare the links…
             var link = svg.selectAll("path.link")
@@ -320,6 +337,30 @@
             link.enter().insert("path", "g")
                 .attr("class", "link")
                 .attr("d", diagonal);
+        }
+
+        // Toggle children on click.
+        function collapseClick(d) {
+            console.log(d)
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            // if (isLeft(d)){
+            //     d.xScale += 1
+            // }
+            update(d);
+        }
+
+        function isLeft(d){
+            if (d.parent.children[0].id == d.id){
+                return true
+            } else {
+                return false
+            }
         }
 
         function handleMouseClick(d, field) {
@@ -341,7 +382,7 @@
             input.style.zIndex = 2
             input.style.position = "absolute"
             input.style.left = rect.x + 'px'
-            input.style.top =  y+'px'
+            input.style.top = y + 'px'
             input.style.width = rect.width + 'px'
             input.style.height = rect.height + 'px'
             input.style.fontSize = 8 + 'px'
