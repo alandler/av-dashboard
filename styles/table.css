@@ -1,0 +1,29 @@
+#file-selectors {
+    display: grid
+}
+
+#uploadDotfileButton {
+    width: 30%;
+    margin: 1%;
+    background: none;
+    border: none;
+    border-radius: 10%;
+    font-size: small;
+    height: min-content;
+    color: darkblue;
+}
+
+input {
+    height: min-content;
+}
+
+label {
+    height: min-content;
+    font-weight: bold;
+    /* vertical-align: top; */
+}
+
+#uploadDotfileButton:hover {
+    text-decoration: underline;
+    color: darkred;
+}

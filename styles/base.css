@@ -1,0 +1,18 @@
+html {
+    font-family: Arial, Helvetica, sans-serif
+}
+
+body {
+    display: grid;
+}
+
+form {
+    padding: 15px;
+    padding-top: 5px;
+    color: white;
+    background: darkgrey;
+}
+
+#newParentForm {
+    display: none;
+}
