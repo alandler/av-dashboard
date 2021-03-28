@@ -27,6 +27,7 @@ async function handleDotfileUpload(file, treeID){
     var description = prompt("Please desctibe this decision tree", "eg.  ambulance context");
     trees[treeID]["description"] = description
     trees[treeID]["color"] = colorGenerator()
+    applyColorToNodes(tree["nodes"], trees[treeID]["color"])
     drawLegend()
 }
 
