@@ -1,18 +1,21 @@
+    
+   
+
     // ************** DOTFILE Parsing	 *****************
-    function treeFromFile(e) {
+   function treeFromFile(file) {
 
         return new Promise((resolve, reject) => {
-
-        file = e.target.files[0]
-
         let reader = new FileReader()
-        reader.readAsText(file)
         reader.onload = function () {
             var [nXnodes, nXedges, head] = parseDot(reader.result)
-            var [nodes, edges] = getNodePositions(nXnodes, nXedges, head, 440, -150, true)
-            var tree = { "nodes": nodes, "edges": edges, "head": head, "description": "No description yet" }
+            // var [nodes, edges] = getNodePositions(nXnodes, nXedges, head, 440, -95, -1, true)
+            console.log("PARSED")
+            console.log(nXedges)
+            var tree = { "nodes": nXnodes, "edges": nXedges, "head": head, "description": "No description yet" }
             resolve(tree)
         }
+        reader.onerror = reject;
+        reader.readAsText(file)
     })
     }
 

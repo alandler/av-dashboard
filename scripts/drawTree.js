@@ -1,36 +1,146 @@
-margin = { top: 20, right: 50, bottom: 20, left: 20 },
+margin = { top: 200, right: 10, bottom: 10, left: 10 },
     width = 740 - margin.right - margin.left,
     height = 800 - margin.top - margin.bottom;
 
+mainTree = {
+    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true } },
+    "edges": { 0: [] },
+    "head": 0
+}
 
 function instantiateSVG() {
     var svg = d3.select("#svg").append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-}
+        .attr("width", width + margin.right + margin.left)
+        .attr("height", height + margin.top + margin.bottom)
 
-function drawLegend(){
-    console.log("Draw legend")
-    console.log(trees)
+    // Border SVG
+    svg.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", width + margin.right + margin.left)
+        .style("stroke", "black")
+        .style("fill", "none")
+        .style("stroke-width", 1);
+
+    // Legend border
+    svg.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("height", margin.top)
+        .attr("width", width + margin.right + margin.left)
+        .style("stroke", "black")
+        .style("fill", "lightgray")
+        .style("stroke-width", 1);
+}
+// function drag(event) {
+
+//     function dragstarted(event, d) {
+//       console.log("Start")
+//       console.group(event)
+//       console.log(d)
+//       d3.select(this).raise().attr("stroke", "black");
+//     }
+  
+//     function dragged(event, d=true) {
+//         console.log("Dragged")
+//         console.group(event)
+//         d3.select(this).attr("x", event.x).attr("y", event.y);
+//       d3.select(this).attr("x", d.x = event.x).attr("y", d.y = event.y);
+//     }
+  
+//     function dragended(event, d) {
+//         console.log("Ended")
+//       d3.select(this).attr("stroke", null);
+//     }
+  
+//     return d3.drag()
+//         .on("start", dragstarted)
+//         .on("drag", dragged)
+//         .on("end", dragended);
+//   }
+
+var drag = d3.behavior.drag()
+    // .origin(function (d) { return d })
+    .on('drag', function (d) {
+        d3.select(this).attr('x', function (d) { return  d.x += d3.event.dx });
+        d3.select(this).attr('y', function (d) { return d.y+= d3.event.dy });
+    })
+    .on('dragstart', function (d) {
+        d3.event.sourceEvent.stopPropagation()
+    })
+    .on('dragend', function (d) {
+        var nearNode = nearestNode(d.x,d.y)
+        var [newN, newE] = mergeTrees(mainTree["nodes"], trees[d.id]["nodes"], 
+                    mainTree["edges"],trees[d.id]["edges"],
+                    nearNode, trees[d.id]["head"])
+        console.log(newN)
+        var [n, e] = getNodePositions(newN, newE, mainTree["head"], width/2, 0, -1, false)
+        mainTree["nodes"] = n
+        mainTree["edges"] = e
+        resetNodes()
+        drawLegend();
+    })
+
+function nearestNode(x,y){
+    var minDist = Infinity
+    var minNode = null
+    for (var node in mainTree["nodes"]){
+        var diffX = mainTree["nodes"][node]["x"]-x
+        var diffY = mainTree["nodes"][node]["y"]-y
+        var dist = Math.sqrt( diffX*diffX + diffY*diffY )
+        if (dist<minDist){
+            minNode = node
+        }
+    }
+    return minNode
+}
+function drawLegend() {
+    var data = []
+    for (var key in trees){
+        data.push({"id":key, "x": 10, "y": key*30, "color": trees[key]["color"], "description": trees[key]["description"]})
+    }
     var svg = d3.select("svg")
-    console.log(Object.values(trees))
-    var legend = svg.selectAll("rect")
-                .data(Object.keys(trees));
-    var legendEnter = legend.enter()
-        .append("rect")
-        .attr("fill", d => {return trees[d]["color"]})
+    var legend = svg.selectAll("g.rect")
+        .remove()
+        .data(data)
+        .enter()
+        .append("g");
+    legend.append("rect")
+        .attr("fill", d => { return d.color })
         .attr("width", 15)
         .attr("height", 15)
-        .attr("transform", function (d) {
-            return "translate(" + 5 + "," + d*20 + ")";
-        })
+        .attr("x", function (d) {return d.x})
+        .attr("y", function (d) {return d.y})
+        // .attr("transform", function (d) {
+        //     return "translate(" + 10 + "," + d * 30 + ")";
+        // })
+        // .on("ondragstart", dragged)
+        .call(drag)
+        .on('click', function(){
+            if(d3.event.defaultPrevented) return;
+            console.log('clicked');
+        });
+        // .on("ondragstart", dragged)
+
+    legend.append("text")
+        .text(d => { return d.description })
+        .attr("x", function (d) { return d.x+20; })
+        .attr("y", function (d) { return d.y; })
+        .attr("dy", ".7em")
+        .attr("text-anchor", "start")
 }
 
-function drawTree(tree) {
+function drawTree() {
+    var nodes = mainTree["nodes"]
+    var edges = mainTree["edges"]
+    var head = mainTree["head"]
 
-    let duration = 400;
+    let duration = 400
+    var i = 0
+
+    var svg = d3.select("svg").append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var diagonal = d3.svg.diagonal()
         .projection(function (d) { return [d.x, d.y]; });
@@ -39,21 +149,24 @@ function drawTree(tree) {
         if (n.depth > 1) { n.shown = false }
     })
 
-    var nodes = tree["nodes"]
-    var edges = tree["edges"]
-    var head = tree["head"]
-
     update(head)
 
     function update(source) {
+        var nodes = mainTree["nodes"]
+        var edges = mainTree["edges"]
+        var head = mainTree["head"]
         visibleNodes = Object.values(nodes)
         visibleNodes = visibleNodes.filter(obj => obj.shown != 0)
 
         // Access nodes
         var node = svg.selectAll("g.node")
-            .data(visibleNodes, function (d) {
-                return d.id || (d.id = ++i);
-            });
+            .data(visibleNodes
+                // , 
+                // function (d) {
+                // console.log("g.node")
+                // console.log(d)
+                // return d.id || (d.id = ++i);}
+            );
 
         //Access the existing nodes
         var nodeEnter = node.enter()
@@ -68,10 +181,14 @@ function drawTree(tree) {
             .attr("cy", -15)
             .attr("r", 5)
             .attr("fill", d => {
-                if (edges[d["id"]].length == 0 || edges[d["id"]][0].shown){
+                if (edges[d["id"]].length == 0 || edges[d["id"]][0]==undefined) {
                     return "#ffffff"
-                } else {
-                    return tree["color"]
+                } 
+                // else if (nodes[edges[d["id"]][0]].shown){
+                //     return "#ffffff"
+                // }
+                else {
+                    return d["color"]
                 }
             })
             .attr("stroke-width", 10)
@@ -92,12 +209,12 @@ function drawTree(tree) {
             .attr("dy", function (d, i) {
                 return 12 * i
             })
-            .on("click", handleMouseClick)
-            .on("mouseover", handleMouseOver)
-            .on("mouseout", handleMouseOut)
+            .on("click", handleLabelClick)
+            .on("mouseover", handleLabelMouseOver)
+            .on("mouseout", handleLabelMouseOut)
 
         //Create links
-        links = getLinks();
+        links = getLinks(nodes, edges);
 
         // Declare the links…
         var link = svg.selectAll("path.link")
@@ -140,6 +257,8 @@ function drawTree(tree) {
 
     }
 
+    drawTree.update = update;
+
     function getChildren(source) {
         if (edges[source] == undefined) {
             return []
@@ -165,7 +284,6 @@ function drawTree(tree) {
     }
 
     function handleRightClick(d, i) {
-        console.log(d)
         if (edges[d["id"]].length == 0) {
             alert("Add a leaf node?")
         } else if (Object.values(edges)) { // TODO
@@ -174,7 +292,167 @@ function drawTree(tree) {
         else {
             alert("Cannot add a node here!")
         }
-        console.log(d)
-        console.log(i)
     }
+
+    // ************** D3 Operations *****************
+    function collapse(source) {
+        nodes[source].shown = false
+        if (edges[source] == undefined) {
+            return
+        }
+        if (edges[source].length == 1) {
+            collapse(edges[source][0])
+        } else {
+            collapse(edges[source][0])
+            collapse(edges[source][1])
+        }
+    }
+
+    function showChildren(source) {
+        if (edges[source].length == 1) {
+            nodes[edges[source][0]]['shown'] = true
+        } else {
+            nodes[edges[source][0]]['shown'] = true
+            nodes[edges[source][1]]['shown'] = true
+        }
+    }
+
+    function getLinks(nodes, edges) {
+        links = []
+
+        for (let node in edges) {
+            for (let i = 0; i < edges[node].length; i++) {
+                if (nodes[edges[node][i]].shown) {
+                    links.push({ "source": nodes[node], "target": nodes[edges[node][i]] })
+                }
+            }
+        }
+        return links
+    }
+
+    function handleLabelClick(d, field) {
+        //Remove previous input boxes
+        let toRemove = document.getElementsByClassName("overlayText")[0]
+        if (toRemove != undefined) {
+            toRemove.parentNode.removeChild(toRemove);
+        }
+
+        //Get coordinates
+        var rect = this.getBoundingClientRect()
+        var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+        var y = rect.y + scrollTop
+
+        //Set up input over the svg
+        var input = document.createElement("input");
+        input.type = "text";
+        input.className = "overlayText"
+        input.style.zIndex = 2
+        input.style.position = "absolute"
+        input.style.left = rect.x + 'px'
+        input.style.top = y + 'px'
+        input.style.width = rect.width + 'px'
+        input.style.height = rect.height + 'px'
+        input.style.fontSize = 8 + 'px'
+        input.value = d
+        input.addEventListener('keyup', (e) => changeLabel(e, d, field))
+        document.body.appendChild(input);
+    }
+
+    function handleLabelMouseOver(d, field) {
+        d3.select(this).style('fill', 'darkOrange');
+    }
+
+    function handleLabelMouseOut(d, field) {
+        d3.select(this).style('fill', 'black');
+    }
+
+    function changeLabel(e, d, field) {
+
+        if (!e) { var e = window.event; }
+        e.preventDefault();
+
+        // Enter is released
+        if (e.keyCode == 13) {
+            var newString = mainTree["nodes"][field]["label"].replace(d, e.target.value)
+            mainTree["nodes"][field]["label"] = newString
+            e.target.remove()
+            resetNodes()
+        };
+    }
+}
+
+function getNodeMaxID(nodes) {
+    var keys = Object.keys(nodes)
+    var asInts = keys.map(x => parseInt(x))
+    return Math.max(...asInts)
+}
+
+function mergeTrees(nodes1, nodes2, edges1, edges2, target, head2) {
+    console.log("MergeTrees")
+    console.log(edges2)
+    //Sanity checks
+    if (!(target in Object.keys(nodes1))) {
+        alert("Target is not in the destination tree")
+        return
+    }
+
+    // Get new (non overlapping) IDs for the second tree
+    var newNodeIDs = {}
+    var maxID = getNodeMaxID(nodes1)
+    var nodes2Keys = Object.keys(nodes2)
+    for (var i = 0; i < nodes2Keys.length; i++) {
+        newNodeIDs[nodes2Keys[i]] = maxID + i + 1
+    }
+
+    //exchange nodes2 ids
+    var sortedKeysNodes2 = Object.keys(nodes2)
+    var copyNodes2 = {}
+    for (var i in sortedKeysNodes2) {
+        let temp = {}
+        temp = Object.assign(temp, nodes2[i]) //Assign temp to value of node
+        temp["id"] = newNodeIDs[i]
+        copyNodes2[i] = temp
+    } 
+    nodes2 = {}
+    for (var i in sortedKeysNodes2) {
+        nodes2[newNodeIDs[i]] = copyNodes2[i]
+    }
+
+    var copyEdges2 = {}
+    for (var i in sortedKeysNodes2) {
+        if (edges2[i].length == 0){
+            copyEdges2[i] = []
+            continue
+        }
+        copyEdges2[i] = edges2[i].map(x => newNodeIDs[x])
+    } 
+    edges2 = {}
+    for (var i in sortedKeysNodes2) {
+        edges2[newNodeIDs[i]] = copyEdges2[i]
+    }
+
+    // remove remaining old entries
+    for (i=0; i<=maxID; i++){
+        delete nodes2[i]
+        delete edges2[i]
+    }
+
+    head2 = newNodeIDs[head2]
+
+    //Execute the merge
+    var nodes = { ...nodes1, ...nodes2 }
+    var edges = { ...edges1, ...edges2 }
+    edges[target].push(head2) //Add the link from the target node to the second tree's head
+    console.log("NODES")
+    console.log(nodes)
+    console.log("EDGES")
+    console.log(edges)
+
+    return [nodes, edges]
+}
+
+function resetNodes(){
+    var svg = d3.select("svg")
+    var node = svg.selectAll("g.node").remove()
+    drawTree()
 }

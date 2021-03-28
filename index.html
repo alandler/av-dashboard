@@ -53,6 +53,9 @@
 </body>
 
 <!-- Scripts -->
+<!-- <script src="https://d3js.org/d3-dispatch.v2.min.js"></script>
+<script src="https://d3js.org/d3-selection.v2.min.js"></script> -->
+<!-- <script src="https://d3js.org/d3-drag.v2.min.js"></script> -->
 <script src="scripts/parseTree.js"></script>
 <script src="scripts/drawTree.js"></script>
 <script src="scripts/helper.js"></script>
@@ -61,7 +64,7 @@
 
     // ************** Event listeners	 *****************
     const inputFileDiv = document.getElementById("file-selector-1")
-    inputFileDiv.addEventListener('input', handleDotfileUpload)
+    inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], e.target.id.substring(14)))
     // const parentNodeForm = document.getElementById("newParentForm")
     // parentNodeForm.addEventListener('submit', addNewRoot)
     // const closeParentForm = document.getElementById("closeParentForm")
@@ -120,19 +123,23 @@
         updateTree()
     }
 
-    function getNodePositions(nodes, edges, source, parentX, parentY, left) {
+    function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left) {
+        if (parentY == 0) {
+            nodes[source]['y'] = 0
+        } else {
+            nodes[source]['y'] = parentY + 100
+        }
         nodes[source]['x'] = left ? parentX - 60 : parentX + 60
-        nodes[source]['y'] = parentY + 150
-        nodes[source]["depth"] = nodes[source]["y"] / 150
+        nodes[source]["depth"] = parentDepth + 1
         nodes[source]['shown'] = true
-        if (edges[source] == undefined) {
+        if (edges[source] == undefined || edges[source].length == 0) {
             edges[source] = []
         }
         else if (edges[source].length == 1) {
-            [nodes,edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], true)
+            [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true)
         } else {
-            [nodes,edges] =getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], true)
-            [nodes,edges] =getNodePositions(nodes, edges, edges[source][1], nodes[source]['x'], nodes[source]['y'], false)
+            [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true)
+            [nodes, edges] = getNodePositions(nodes, edges, edges[source][1], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], false)
         }
         return [nodes, edges]
     }
@@ -153,124 +160,8 @@
         return result
     }
 
-    // ************** D3 Operations *****************
-    function collapse(source) {
-        nodes[source].shown = false
-        if (edges[source] == undefined) {
-            return
-        }
-        if (edges[source].length == 1) {
-            collapse(edges[source][0])
-        } else {
-            collapse(edges[source][0])
-            collapse(edges[source][1])
-        }
-    }
-
-    function showChildren(source) {
-        if (edges[source].length == 1) {
-            nodes[edges[source][0]]['shown'] = true
-        } else {
-            nodes[edges[source][0]]['shown'] = true
-            nodes[edges[source][1]]['shown'] = true
-        }
-    }
-
-    function getLinks() {
-        links = []
-
-        for (let node in edges) {
-            for (let i = 0; i < edges[node].length; i++) {
-                if (nodes[edges[node][i]].shown) {
-                    links.push({ "source": nodes[node], "target": nodes[edges[node][i]] })
-                }
-            }
-        }
-        return links
-    }
-
-    function handleMouseClick(d, field) {
-        //Remove previous input boxes
-        let toRemove = document.getElementsByClassName("overlayText")[0]
-        if (toRemove != undefined) {
-            toRemove.parentNode.removeChild(toRemove);
-        }
-
-        //Get coordinates
-        var rect = this.getBoundingClientRect()
-        var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-        var y = rect.y + scrollTop
-
-        //Set up input over the svg
-        var input = document.createElement("input");
-        input.type = "text";
-        input.className = "overlayText"
-        input.style.zIndex = 2
-        input.style.position = "absolute"
-        input.style.left = rect.x + 'px'
-        input.style.top = y + 'px'
-        input.style.width = rect.width + 'px'
-        input.style.height = rect.height + 'px'
-        input.style.fontSize = 8 + 'px'
-        input.value = d
-        document.body.appendChild(input);
-    }
-
-    function handleMouseOver(d, field) {
-        d3.select(this).style('fill', 'darkOrange');
-    }
-
-    function handleMouseOut(d, field) {
-        d3.select(this).style('fill', 'black');
-    }
-
-    function mergeTrees(nodes1, nodes2, edges1, edges2, head1, target, head2) {
-        //Sanity checks
-        if (!(target in Object.keys(nodes1))) {
-            alert("Target is not in the destination tree")
-            return
-        }
-
-        // Get new (non overlapping) IDs for the second tree
-        var newNodeIDs = {}
-        var maxID = getNodeMaxID(nodes1)
-        var nodes2Keys = Object.keys(nodes2)
-        for (var i = 0; i < nodes2Keys.length; i++) {
-            newNodeIDs[nodes2Keys[i]] = maxID + i + 1
-        }
-
-        //exchange nodes2 ids
-        for (const [key, val] of Object.entries(nodes2)) {
-            let temp = {}
-            temp = Object.assign(temp, nodes2[key])
-            temp["id"] = newNodeIDs[key]
-            nodes2[newNodeIDs[key]] = temp
-            delete nodes2[key]
-        }
-
-        for (const [key, val] of Object.entries(edges2)) {
-            var changedList = edges2[key].map(x => newNodeIDs[x])
-            edges2[newNodeIDs[key]] = changedList
-            delete edges2[key]
-        }
-
-        head2 = newNodeIDs[head2]
-
-        //Execute the merge
-        var nodes = { ...nodes1, ...nodes2 }
-        var edges = { ...edges1, ...edges2 }
-        edges[target].push(head2) //Add the link from the target node to the second tree's head
-
-        return [nodes, edges, head1]
-    }
-
-    function getNodeMaxID(nodes) {
-        var keys = Object.keys(nodes)
-        var asInts = keys.map(x => parseInt(x))
-        return Math.max(...asInts)
-    }
-
     instantiateSVG()
+    drawTree()
 </script>
 
 <script src="scripts/tests.js"></script>

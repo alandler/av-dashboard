@@ -2,7 +2,6 @@ trees = {}
 
 function getNextTreeID(){
     var maxID = Math.max(...Object.keys(trees))
-    console.log(maxID)
     return maxID + 1
 }
 
@@ -12,19 +11,22 @@ function addInputDiv(){
     fileInput.type = "file"
     fileInput.id = "file-selector-" + getNextTreeID()
     fileInput.accept = ".dot"
-    fileInput.addEventListener('input', handleDotfileUpload)
+    fileInput.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0],e.target.id.substring(14)))
     fileSelectionDiv.append(fileInput)
 }
 
-async function handleDotfileUpload(e){
-    var treeID = e.target.id.substring(14)
-    var tree = await treeFromFile(e)
+async function handleDotfileUpload(file, treeID){
+    // console.log(file)
+    // var treeID = e.target.id.substring(14)
+    // var file = e.target.files[0]
+    var tree = await treeFromFile(file)
+    var [n, e] = getNodePositions(tree["nodes"], tree["edges"], tree["head"], (treeID)*85, -70, -1, false)
+    tree["nodes"] = n
+    tree["edges"] = e
     trees[treeID] = tree
     var description = prompt("Please desctibe this decision tree", "eg.  ambulance context");
-    console.log("description " + description)
     trees[treeID]["description"] = description
     trees[treeID]["color"] = colorGenerator()
-    console.log(trees)
     drawLegend()
 }
 
