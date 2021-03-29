@@ -17,3 +17,9 @@
     stroke: #ccc;
     stroke-width: 2px;
 }
+
+#svg {
+    width: 740;
+    height:800px;
+    overflow:scroll;
+}

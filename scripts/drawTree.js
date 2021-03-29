@@ -1,6 +1,6 @@
 margin = { top: 200, right: 10, bottom: 10, left: 10 },
-    width = 740 - margin.right - margin.left,
-    height = 800 - margin.top - margin.bottom;
+    width = 900 - margin.right - margin.left,
+    height = 2000 - margin.top - margin.bottom;
 
 mainTree = {
     "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true } },
@@ -12,6 +12,9 @@ function instantiateSVG() {
     var svg = d3.select("#svg").append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
+        // .call(d3.zoom().on("zoom", function () {
+        //     svg.attr("transform", d3.event.transform)
+        //  }))
 
     // Border SVG
     svg.append("rect")
