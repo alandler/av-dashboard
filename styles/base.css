@@ -16,3 +16,13 @@ form {
 #newParentForm {
     display: none;
 }
+
+.context-menu{
+    display: none;
+    position: absolute;
+}
+
+.context-menu-active{
+    display: overlay;
+    position: absolute;
+}

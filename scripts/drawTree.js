@@ -318,8 +318,19 @@ function drawTree() {
     }
 
     function handleRightClick(d, i) {
+        console.log("handle right click")
+        console.log(d, i)
+        console.log(d3.event.pageX);
+        console.log(document.getElementById("tree-right-click-menu"))
+        var menu = document.getElementById("tree-right-click-menu")
+        menu.style.left = d3.event.pageX+"px"
+        menu.style.top = d3.event.pageY+"px"
+        menu.classList.add("context-menu-active")
+        menu.classList.remove("context-menu")
+
+        return 
         if (edges[d["id"]].length == 0) {
-            alert("Add a leaf node?")
+            confirm("Do you want to add a leaf node?")
         } else if (Object.values(edges)) { // TODO
             alert("Add a parent node?")
         }
