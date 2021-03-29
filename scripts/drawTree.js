@@ -72,6 +72,7 @@ var drag = d3.behavior.drag()
     .on('dragend', function (d) {
         d3.select(this).remove()
         var nearNode = nearestNode(d.x, d.y)
+        console.log("Nearest Node" + nearNode)
         var [newN, newE] = mergeTrees(mainTree["nodes"], trees[d.id]["nodes"],
             mainTree["edges"], trees[d.id]["edges"],
             nearNode, trees[d.id]["head"])
@@ -86,19 +87,23 @@ var drag = d3.behavior.drag()
     })
 
 function nearestNode(x, y) {
+    console.log("node nearest to: (" + x +","+y+")")
     var minDist = Infinity
     var minNode = null
     for (var node in mainTree["nodes"]) {
         var diffX = mainTree["nodes"][node]["x"] - x
-        var diffY = mainTree["nodes"][node]["y"] - y
+        var diffY = mainTree["nodes"][node]["y"]+margin.top-15 - y //y is offset from 200, and circle -15 from that
+        console.log ("delta x: " + diffX + "... delta y: " + diffY)
         var dist = Math.sqrt(diffX * diffX + diffY * diffY)
         if (dist < minDist) {
             minNode = node
+            minDist = dist
         }
     }
     return minNode
 }
 function drawLegend() {
+    d3.selectAll("g.legend").remove()
     var data = []
     for (var key in trees) {
         data.push({ "id": key, "x": 10, "y": key * 30, "color": trees[key]["color"], "description": trees[key]["description"] })
@@ -108,7 +113,8 @@ function drawLegend() {
         .remove()
         .data(data)
         .enter()
-        .append("g");
+        .append("g")
+        .attr("class", "legend");
     legend.append("rect")
         .attr("fill", d => { return d.color })
         .attr("width", 15)
@@ -144,6 +150,7 @@ function drawTree() {
 
     var svg = d3.select("svg")
         .append("g")
+        .attr("class", "tree")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var diagonal = d3.svg.diagonal()
@@ -159,8 +166,8 @@ function drawTree() {
         var nodes = mainTree["nodes"]
         var edges = mainTree["edges"]
         var head = mainTree["head"]
-        console.log("Nodes upon enter update:")
-        console.log(nodes)
+        // console.log("Nodes upon enter update:")
+        // console.log(nodes)
         // visibleNodes = Object.values(nodes)
         // visibleNodes = visibleNodes.filter(obj => obj.shown != 0)
         // console.log(visibleNodes)
@@ -190,7 +197,7 @@ function drawTree() {
             .append("g")
             .attr("class", "node")
             .attr("transform", function (d) {
-                console.log("Change: " + d.id)
+                // console.log("Change: " + d.id)
                 return "translate(" + d.x + "," + d.y + ")";
             })
 
@@ -206,11 +213,12 @@ function drawTree() {
                 //     return "#ffffff"
                 // }
                 else {
-                    console.log("Fill" + d["color"])
+                    // console.log("Fill" + d["color"])
                     return d["color"]
                 }
             })
             .attr("stroke-width", 10)
+            .attr("stroke", function (d) {return d["color"]})
             .on("click", toggleCollapse)
             .on("contextmenu", function (d, i) {
                 d3.event.preventDefault();
@@ -291,8 +299,8 @@ function drawTree() {
 
     function toggleCollapse(d) {
         let children = getChildren(d.id)
-        console.log("Children of " + d.id)
-        console.log(children)
+        // console.log("Children of " + d.id)
+        // console.log(children)
         if (children.length == 0) {
             return
         } else if (children[0].shown) {
@@ -301,6 +309,8 @@ function drawTree() {
         } else {
             showChildren(d.id)
         }
+        // resetNodes()
+        // drawTree()
         update(d.id)
     }
 
@@ -336,10 +346,10 @@ function drawTree() {
             nodes[edges[source][0]]['shown'] = true
             nodes[edges[source][1]]['shown'] = true
 
-            console.log("Shown:")
-            console.log(edges[source])
-            console.log(nodes[edges[source][0]])
-            console.log(nodes[edges[source][1]])
+            // console.log("Shown:")
+            // console.log(edges[source])
+            // console.log(nodes[edges[source][0]])
+            // console.log(nodes[edges[source][1]])
         }
     }
 
@@ -479,6 +489,6 @@ function mergeTrees(nodes1, nodes2, edges1, edges2, target, head2) {
 
 function resetNodes() {
     var svg = d3.select("svg")
-    var node = svg.selectAll("g.node").remove()
+    var node = svg.selectAll("g.tree").remove()
     drawTree()
 }

@@ -124,12 +124,14 @@
     }
 
     function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left) {
-        if (parentY == 0) {
-            nodes[source]['y'] = 0
-        } else {
+        if (parentDepth == -1){
+            nodes[source]['x'] = parentX
+            nodes[source]['y'] = parentY
+        }
+        else {
+            nodes[source]['x'] = left ? parentX - 65 : parentX + 65
             nodes[source]['y'] = parentY + 100
         }
-        nodes[source]['x'] = left ? parentX - 60 : parentX + 60
         nodes[source]["depth"] = parentDepth + 1
         nodes[source]['shown'] = true
         if (edges[source] == undefined || edges[source].length == 0) {

@@ -8,10 +8,10 @@
     head2 = 0
 
     var [n, e] = mergeTrees(nodes1, nodes2, edges1, edges2, target, head2);
-    console.log("Executed Merge:")
-    console.log(n)
-    console.log(e)
-    console.log("End merge results")
+    // console.log("Executed Merge:")
+    // console.log(n)
+    // console.log(e)
+    // console.log("End merge results")
 
     //Tree object description
     tree = { "nodes": {}, "edges": {}, "head": {}, "description": {} }
