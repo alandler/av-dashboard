@@ -10,7 +10,7 @@
     border-radius: 10%;
     font-size: small;
     height: min-content;
-    color: darkblue;
+    color:#FF7D00;
 }
 
 input {
@@ -25,5 +25,13 @@ label {
 
 #uploadDotfileButton:hover {
     text-decoration: underline;
-    color: darkred;
+    color:#78290F;
+}
+
+caption{
+    color: #FF7D00;
+}
+
+.upload{
+    margin-top: 10px;
 }

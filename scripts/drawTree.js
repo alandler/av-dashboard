@@ -1,5 +1,7 @@
+rightClickNode = 0
+
 margin = { top: 200, right: 10, bottom: 10, left: 10 },
-    width = 900 - margin.right - margin.left,
+    width = 1020 - margin.right - margin.left,
     height = 2000 - margin.top - margin.bottom;
 
 mainTree = {
@@ -33,7 +35,7 @@ function instantiateSVG() {
         .attr("height", margin.top)
         .attr("width", width + margin.right + margin.left)
         .style("stroke", "black")
-        .style("fill", "lightgray")
+        .style("fill", "#FFECD1")
         .style("stroke-width", 1);
 }
 // function drag(event) {
@@ -319,6 +321,7 @@ function drawTree() {
 
     function handleRightClick(d, i) {
         console.log("handle right click")
+        rightClickNode = d
         console.log(d, i)
         console.log(d3.event.pageX);
         console.log(document.getElementById("tree-right-click-menu"))
@@ -505,4 +508,23 @@ function resetNodes() {
     var svg = d3.select("svg")
     var node = svg.selectAll("g.tree").remove()
     drawTree()
+}
+
+function resetNodesWithNewPositions(){
+    var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false)
+        mainTree["nodes"] = n
+        mainTree["edges"] = e
+
+    var svg = d3.select("svg")
+    var node = svg.selectAll("g.tree").remove()
+    drawTree()
+}
+
+function getParent(nodeID){
+    for (let i in mainTree["edges"]){
+        if (mainTree["edges"][i].includes(nodeID)){
+            return i
+        }
+    }
+    return null
 }

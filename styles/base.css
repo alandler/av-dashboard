@@ -4,6 +4,12 @@ html {
 
 body {
     display: grid;
+    color: #15616D;
+    background-color: white;
+}
+
+.navbar {
+    margin-bottom: 0px;
 }
 
 form {
@@ -25,4 +31,22 @@ form {
 .context-menu-active{
     display: overlay;
     position: absolute;
+}
+
+#log{
+    margin-top: 30px;
+}
+
+#heading{
+    margin-left: 10px;
+}
+
+.control-panel{
+    background-color: #15616D;
+    color: white;
+}
+
+#instructions{
+    color: #15616D;
+    font-style: oblique;
 }
