@@ -21,28 +21,31 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="#">Meta Controller <span class="sr-only">(current)</span></a>
-            <a class="nav-item nav-link" href="#">Build an Expert</a>
-            <a class="nav-item nav-link" href="#">Help</a>
-            <a class="nav-item nav-link disabled" href="#">Contact</a>
-          </div>
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="#">Meta Controller <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="#">Build an Expert</a>
+                <a class="nav-item nav-link" href="#">Help</a>
+                <a class="nav-item nav-link disabled" href="#">Contact</a>
+            </div>
         </div>
-      </nav>
+    </nav>
 
-    <div id = "heading">
-    <h1>
-        DTLight: Reinforcement Learning Traffic Control Dashboard
-    </h1>
-    <b id ="instructions">Instructions</b>
-    <p>Upload a dotfile to start. It will appear in the gray portion of the image below as part of a legend. Drag the
-        colored box into the decision tree and drop at the point desired. To expand or collapse portions of the tree, click a 
-        filled-in node. Right click on the parent node to add a new root or child node in order to generate the meta
-        controller. </p>
+    <div id="heading">
+        <h1>
+            DTLight: Reinforcement Learning Traffic Control Dashboard
+        </h1>
+        <b id="instructions">Instructions</b>
+        <p>Upload a dotfile to start. It will appear in the gray portion of the image below as part of a legend. Drag
+            the
+            colored box into the decision tree and drop at the point desired. To expand or collapse portions of the
+            tree, click a
+            filled-in node. Right click on the parent node to add a new root or child node in order to generate the meta
+            controller. </p>
     </div>
 
     <div class="container-fluid">
@@ -106,7 +109,7 @@
         </div>
     </div>
 
-    <nav class="context-menu" id="tree-right-click-menu" onblur= "setDisplayNone()">
+    <nav class="context-menu" id="tree-right-click-menu">
         <ul class="context-menu-items">
             <li class="context-menu-item">
                 <a href="#" onclick="addParent(event)" class="context-menu-link">
@@ -114,7 +117,7 @@
                 </a>
             </li>
             <li class="context-menu-item">
-                <a href="#" class="context-menu-link">
+                <a href="#" onclick="addLeaf(event)" class="context-menu-link">
                     <i class="fa fa-edit"></i> Add Leaf Node
                 </a>
             </li>
@@ -193,30 +196,58 @@
         updateTree()
     }
 
-    function addParent(){
+    function addParent() {
         console.log("Add a parent: " + rightClickNode.id)
         console.log(mainTree["edges"][rightClickNode.id])
         // Assert that node doesn't have a parent
-        if (getParent(rightClickNode.id) != null){
+        if (getParent(rightClickNode.id) != null) {
             alert("Sorry! That node has a parent already")
             return
         }
+        else {
+            let prevID = getNodeMaxID(mainTree["nodes"])
+            console.log("Previous id: " + prevID)
+            let newID = prevID + 1
+            console.log("New id: " + newID)
+            mainTree["nodes"][newID] =
+            {
+                "id": newID,
+                "label": "Default label",
+                "x": width / 2,
+                "y": 25,
+                "color": "#999999",
+                "shown": true
+            }
+            mainTree["edges"][newID] = [rightClickNode.id]
+            mainTree["head"] = newID
+            console.log(mainTree)
+            resetNodesWithNewPositions()
+        }
+        setDisplayNoneContextMenu()
+    }
 
-        let prevID = getNodeMaxID(mainTree["nodes"])
-        console.log("Previous id: " + prevID)
-        let newID = prevID+1
-        console.log("New id: " + newID)
-        mainTree["nodes"][newID] = 
-            { "id": newID, 
-            "label": "Default label", 
-            "x": width / 2, 
-            "y": 25, 
-            "color": "#999999", 
-            "shown": true}
-        mainTree["edges"][newID] = [rightClickNode.id]
-        mainTree["head"]= newID
-        console.log(mainTree)
-        resetNodesWithNewPositions()
+    function addLeaf(){
+        console.log("Add a lead on nodeID: " + rightClickNode.id)
+        if (mainTree["edges"][rightClickNode.id].length == 2){
+            alert("Leaves full")
+        }
+        else {
+            let prevID = getNodeMaxID(mainTree["nodes"])
+            let newID = prevID + 1
+            mainTree["nodes"][newID] =
+            {
+                "id": newID,
+                "label": "Default label",
+                "x": width / 2,
+                "y": 25,
+                "color": "#999999",
+                "shown": true
+            }
+            mainTree["edges"][rightClickNode.id].push(newID)
+            console.log(mainTree)
+            resetNodesWithNewPositions()
+        }
+        setDisplayNoneContextMenu()
     }
 
     function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left) {
@@ -261,10 +292,10 @@
     instantiateSVG()
     drawTree()
 
-    function setDisplayNone(e){
-        console.log("Set dsplay none")
-        console.log(e.target)
-        e.target.style.display = "none"
+    function setDisplayNoneContextMenu() {
+        menu = document.getElementById("tree-right-click-menu")
+        menu.classList.add("context-menu")
+        menu.classList.remove("context-menu-active")
     }
 </script>
 
