@@ -111,15 +111,20 @@
 
     <nav class="context-menu" id="tree-right-click-menu">
         <ul class="context-menu-items">
-            <li class="context-menu-item">
-                <a href="#" onclick="addParent(event)" class="context-menu-link">
-                    <i class="fa fa-eye"></i> Add Parent Node
-                </a>
+            <li class="context-menu-item" onclick="addParent(event)">
+                <!-- <a href="#" onclick="addParent(event)" class="context-menu-link"> -->
+                <i class="fa fa-eye"></i> Add Parent Node
+                <!-- </a> -->
             </li>
-            <li class="context-menu-item">
-                <a href="#" onclick="addLeaf(event)" class="context-menu-link">
-                    <i class="fa fa-edit"></i> Add Leaf Node
-                </a>
+            <li class="context-menu-item" onclick="addLeaf(event)">
+                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
+                <i class="fa fa-edit"></i> Add Leaf Node
+                <!-- </a> -->
+            </li>
+            <li class="context-menu-item" onclick="deleteNode(rightClickNode.id)">
+                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
+                <i class="fa fa-edit"></i> Delete Node
+                <!-- </a> -->
             </li>
         </ul>
     </nav>
@@ -197,8 +202,6 @@
     }
 
     function addParent() {
-        console.log("Add a parent: " + rightClickNode.id)
-        console.log(mainTree["edges"][rightClickNode.id])
         // Assert that node doesn't have a parent
         if (getParent(rightClickNode.id) != null) {
             alert("Sorry! That node has a parent already")
@@ -206,9 +209,7 @@
         }
         else {
             let prevID = getNodeMaxID(mainTree["nodes"])
-            console.log("Previous id: " + prevID)
             let newID = prevID + 1
-            console.log("New id: " + newID)
             mainTree["nodes"][newID] =
             {
                 "id": newID,
@@ -220,15 +221,13 @@
             }
             mainTree["edges"][newID] = [rightClickNode.id]
             mainTree["head"] = newID
-            console.log(mainTree)
             resetNodesWithNewPositions()
         }
         setDisplayNoneContextMenu()
     }
 
-    function addLeaf(){
-        console.log("Add a lead on nodeID: " + rightClickNode.id)
-        if (mainTree["edges"][rightClickNode.id].length == 2){
+    function addLeaf() {
+        if (mainTree["edges"][rightClickNode.id].length == 2) {
             alert("Leaves full")
         }
         else {
@@ -244,10 +243,36 @@
                 "shown": true
             }
             mainTree["edges"][rightClickNode.id].push(newID)
-            console.log(mainTree)
             resetNodesWithNewPositions()
         }
         setDisplayNoneContextMenu()
+    }
+
+    function deleteNode(nodeID){
+        //Do not delete head 
+        if (nodeID == mainTree["head"]) {
+            alert("Sorry, cannot delete the root")
+        } else {
+            deleteRecursive(nodeID)
+            //Reset svg
+            resetNodesWithNewPositions()
+        }
+        //Remove menu tree
+        setDisplayNoneContextMenu()
+    }
+
+    function deleteRecursive(nodeID) {
+        //Delete children
+        for (let edge of mainTree["edges"][nodeID]) {
+            deleteRecursive(edge)
+        }
+        //Delete from parent's children
+        parentID = getParent(nodeID)
+        arrID =mainTree["edges"][parentID].indexOf(nodeID)
+        mainTree["edges"][parentID].splice(arrID,1)
+        //Delete self
+        delete mainTree["edges"][nodeID]
+        delete mainTree["nodes"][nodeID]
     }
 
     function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left) {

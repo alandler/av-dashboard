@@ -28,6 +28,31 @@ form {
     position: absolute;
 }
 
+ul{
+    list-style-type: none;
+}
+
+li{
+    background-color: #15616D;
+    color: white;
+    padding: 2px;
+    cursor: pointer;
+}
+
+li:hover{
+    background-color: #55949e;
+
+}
+
+a {
+    color: white
+}
+
+/* a:hover {
+    background-color:#5f9da7;
+    color: orange;
+} */
+
 .context-menu-active{
     display: overlay;
     position: absolute;
