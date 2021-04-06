@@ -5,9 +5,6 @@ function treeFromFile(file) {
     let reader = new FileReader()
     reader.onload = function () {
         var [nXnodes, nXedges, head] = parseDot(reader.result)
-        // var [nodes, edges] = getNodePositions(nXnodes, nXedges, head, 440, -95, -1, true)
-        // console.log("PARSED")
-        // console.log(nXedges)
         var tree = { "nodes": nXnodes, "edges": nXedges, "head": head, "description": "No description yet" }
         resolve(tree)
     }
