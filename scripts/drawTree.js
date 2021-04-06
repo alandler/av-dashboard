@@ -10,13 +10,13 @@ mainTree = {
     "head": 0
 }
 
-function instantiateSVG() {
+function instantiateSVG(legend = true) {
     var svg = d3.select("#svg").append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
-        // .call(d3.zoom().on("zoom", function () {
-        //     svg.attr("transform", d3.event.transform)
-        //  }))
+    // .call(d3.zoom().on("zoom", function () {
+    //     svg.attr("transform", d3.event.transform)
+    //  }))
 
     // Border SVG
     svg.append("rect")
@@ -28,15 +28,17 @@ function instantiateSVG() {
         .style("fill", "none")
         .style("stroke-width", 1);
 
-    // Legend border
-    svg.append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("height", margin.top)
-        .attr("width", width + margin.right + margin.left)
-        .style("stroke", "black")
-        .style("fill", "#FFECD1")
-        .style("stroke-width", 1);
+    if (legend == true) {
+        // Legend border
+        svg.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("height", margin.top)
+            .attr("width", width + margin.right + margin.left)
+            .style("stroke", "black")
+            .style("fill", "#FFECD1")
+            .style("stroke-width", 1);
+    }
 }
 // function drag(event) {
 
@@ -92,13 +94,13 @@ var drag = d3.behavior.drag()
     })
 
 function nearestNode(x, y) {
-    console.log("node nearest to: (" + x +","+y+")")
+    console.log("node nearest to: (" + x + "," + y + ")")
     var minDist = Infinity
     var minNode = null
     for (var node in mainTree["nodes"]) {
         var diffX = mainTree["nodes"][node]["x"] - x
-        var diffY = mainTree["nodes"][node]["y"]+margin.top-15 - y //y is offset from 200, and circle -15 from that
-        console.log ("delta x: " + diffX + "... delta y: " + diffY)
+        var diffY = mainTree["nodes"][node]["y"] + margin.top - 15 - y //y is offset from 200, and circle -15 from that
+        console.log("delta x: " + diffX + "... delta y: " + diffY)
         var dist = Math.sqrt(diffX * diffX + diffY * diffY)
         if (dist < minDist) {
             minNode = node
@@ -201,6 +203,9 @@ function drawTree() {
         var nodeEnter = node.enter()
             .append("g")
             .attr("class", "node")
+            .attr("id", function(d){
+                return "node-" + d.id
+            })
             .attr("transform", function (d) {
                 // console.log("Change: " + d.id)
                 return "translate(" + d.x + "," + d.y + ")";
@@ -223,7 +228,7 @@ function drawTree() {
                 }
             })
             .attr("stroke-width", 10)
-            .attr("stroke", function (d) {return d["color"]})
+            .attr("stroke", function (d) { return d["color"] })
             .on("click", toggleCollapse)
             .on("contextmenu", function (d, i) {
                 d3.event.preventDefault();
@@ -326,12 +331,12 @@ function drawTree() {
         console.log(d3.event.pageX);
         console.log(document.getElementById("tree-right-click-menu"))
         var menu = document.getElementById("tree-right-click-menu")
-        menu.style.left = d3.event.pageX+"px"
-        menu.style.top = d3.event.pageY+"px"
+        menu.style.left = d3.event.pageX + "px"
+        menu.style.top = d3.event.pageY + "px"
         menu.classList.add("context-menu-active")
         menu.classList.remove("context-menu")
 
-        return 
+        return
         if (edges[d["id"]].length == 0) {
             confirm("Do you want to add a leaf node?")
         } else if (Object.values(edges)) { // TODO
@@ -407,7 +412,7 @@ function drawTree() {
         input.style.height = rect.height + 'px'
         input.style.fontSize = 8 + 'px'
         input.value = d
-        input.addEventListener('keyup', (e) => changeLabel(e, d, field))
+        input.addEventListener('keyup', (e) => changeLabel(e, d, this.parentNode.parentNode.id.substring(5)))
         document.body.appendChild(input);
     }
 
@@ -426,8 +431,10 @@ function drawTree() {
 
         // Enter is released
         if (e.keyCode == 13) {
+            console.log("Enter is released")
             var newString = mainTree["nodes"][field]["label"].replace(d, e.target.value)
             mainTree["nodes"][field]["label"] = newString
+            console.log(mainTree)
             e.target.remove()
             resetNodes()
         };
@@ -510,19 +517,19 @@ function resetNodes() {
     drawTree()
 }
 
-function resetNodesWithNewPositions(){
+function resetNodesWithNewPositions() {
     var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false)
-        mainTree["nodes"] = n
-        mainTree["edges"] = e
+    mainTree["nodes"] = n
+    mainTree["edges"] = e
 
     var svg = d3.select("svg")
     var node = svg.selectAll("g.tree").remove()
     drawTree()
 }
 
-function getParent(nodeID){
-    for (let i in mainTree["edges"]){
-        if (mainTree["edges"][i].includes(nodeID)){
+function getParent(nodeID) {
+    for (let i in mainTree["edges"]) {
+        if (mainTree["edges"][i].includes(nodeID)) {
             return i
         }
     }
