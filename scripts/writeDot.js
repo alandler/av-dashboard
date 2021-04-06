@@ -1,6 +1,7 @@
-diGraph = "digraph Tree { \n"
+diGraph = ""
 
 function writeDot(){
+    diGraph = "digraph Tree { \n"
     nodes = mainTree["nodes"]
     edges = mainTree["edges"]
     head = mainTree["head"]
@@ -10,7 +11,13 @@ function writeDot(){
     writeChildren(head)
     diGraph += "}"
 
-    document.write(diGraph)
+    // document.write(diGraph)
+    var pre = document.querySelector("pre")
+    if (pre == null || pre == undefined){
+        pre = document.createElement("pre")
+    }
+    pre.innerHTML = diGraph
+    document.body.appendChild(pre)
 }
 
 function writeChildren(nodeID){
@@ -30,7 +37,9 @@ function writeNode(nodeId){
 }
 
 function labelToDot(label){
+    console.log("label: " + label)
     var arr = label.split("\n");
+    console.log(arr)
     var s = ""
     for (var i in arr){
         if (i==arr.length-1){
@@ -39,8 +48,9 @@ function labelToDot(label){
         s += arr[i] + "\\n"
         }
     }
+    return s
 }
 
 function writeEdge(node1, node2){
-    diGraph += node1.id + " -> " + node2.id + " ; \n"
+    diGraph += node1 + " -> " + node2 + " ; \n"
 }
