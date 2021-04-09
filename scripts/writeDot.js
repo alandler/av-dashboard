@@ -11,13 +11,15 @@ function writeDot(){
     writeChildren(head)
     diGraph += "}"
 
-    // document.write(diGraph)
-    var pre = document.querySelector("pre")
-    if (pre == null || pre == undefined){
-        pre = document.createElement("pre")
-    }
-    pre.innerHTML = diGraph
-    document.body.appendChild(pre)
+    //Download text file
+    var a = document.createElement("a")
+    a.setAttribute("href", 'data:text/plain;charset=utf-8,' + encodeURIComponent(diGraph))
+    a.setAttribute("download", "expert.dotfile")
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    download("expert.dotfile", "Downloading expert decision tree.")
 }
 
 function writeChildren(nodeID){
