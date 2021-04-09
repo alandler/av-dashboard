@@ -10,10 +10,10 @@
 - [ ] Add image representing cells of the intersection
 
 ##### Features + Expert Interface
-- [ ] Instead of including experts as entire trees, condense to single node in the meta controller interface
 - [ ] Right click menu --> Make node an expert
 - [ ] Right click menu --> Build expert interface link
 - [ ] If approached this way, when saving the expert, saves to the meta controller
+- [ ] Instead of including experts as entire trees, condense to single node in the meta controller interface (NOTE: Works with existing interface - more a user-defined thing)
 - [x] Download dotfile
 
 ### Backend Database
