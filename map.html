@@ -12,10 +12,19 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script> 
+
     <!-- CSS-->
     <link href="styles/base.css" rel="stylesheet">
     <link href="styles/tree.css" rel="stylesheet">
     <link href="styles/table.css" rel="stylesheet">
+    <link href="styles/map.css" rel="stylesheet">
 </head>
 
 <body>
@@ -27,9 +36,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link" href="map.html">Map</a>
-                <a class="nav-item nav-link" href="index.html">Meta Controller <span class="sr-only">(current)</span></a>
-                <a class="nav-item nav-link active" href="expert_creator.html">Build an Expert</a>
+                <a class="nav-item nav-link active " href="map.html">Map</a>
+                <a class="nav-item nav-link" href="index.html">Meta Controller</span></a>
+                <a class="nav-item nav-link" href="expert_creator.html">Build an Expert</a>
                 <a class="nav-item nav-link" href="logs.html">Logs</a>
                 <a class="nav-item nav-link" href="help.html">Help</a>
             </div>
@@ -38,56 +47,23 @@
 
     <div id="heading">
         <h1>
-            DTLight: Create an Expert Decision Tree
+            DTLight: Map
         </h1>
         <b id="instructions">Instructions</b>
-        <p>Right click on the parent node to add a new root or child node in order to generate the meta
-            controller. </p>
+        <p>Click on an intersection to view the traffic light </p>
     </div>
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-9" id="svg"></div>
-            <div class="col-3 align-content-start control-panel">
-                <div class="row">
-                    <div class="col upload">
-                        <button id = "export-dotfile" onclick = "writeDot()">Export dotfile</button>
-                    </div>
-                </div>
+            <div class="col">
+                <div id="mapid"></div>
             </div>
         </div>
     </div>
 
-    <nav class="context-menu" id="tree-right-click-menu">
-        <ul class="context-menu-items">
-            <li class="context-menu-item" onclick="addParent(event)">
-                <!-- <a href="#" onclick="addParent(event)" class="context-menu-link"> -->
-                <i class="fa fa-eye"></i> Add Parent Node
-                <!-- </a> -->
-            </li>
-            <li class="context-menu-item" onclick="addLeaf(event)">
-                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
-                <i class="fa fa-edit"></i> Add Leaf Node
-                <!-- </a> -->
-            </li>
-            <li class="context-menu-item" onclick="deleteNode(rightClickNode.id)">
-                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
-                <i class="fa fa-edit"></i> Delete Node
-                <!-- </a> -->
-            </li>
-            <li class="context-menu-item" onclick="setDisplayNoneContextMenu()">
-                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
-                <i class="fa fa-edit"></i> Cancel
-                <!-- </a> -->
-            </li>
-        </ul>
-    </nav>
+
 </body>
 
-<!-- Scripts -->
-<!-- <script src="https://d3js.org/d3-dispatch.v2.min.js"></script>
-<script src="https://d3js.org/d3-selection.v2.min.js"></script> -->
-<!-- <script src="https://d3js.org/d3-drag.v2.min.js"></script> -->
 <script src="scripts/require.js"></script>
 <script src="scripts/parseTree.js"></script>
 <script src="scripts/drawTree.js"></script>
@@ -95,6 +71,7 @@
 <script src="scripts/trees.js"></script>
 <script src="scripts/mainTreeEditor.js"></script>
 <script src="scripts/writeDot.js"></script>
+<script src="scripts/map.js"></script>
 <script>
     margin = { top: 10, right: 10, bottom: 10, left: 10 },
     width = 1020 - margin.right - margin.left,
