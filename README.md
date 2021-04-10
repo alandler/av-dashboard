@@ -6,8 +6,8 @@
 ##### Bugs
 - [ ] Autosize the SVG based on size
 - [ ] Autoplace nodes to avoid overlap (currently assuming users only need to see one leg of the tree at a time)
-- [ ] Reduce labels to decision criteria. Leaves only to include action.
 - [ ] Add image representing cells of the intersection
+- [x] Reduce labels to decision criteria. Leaves only to include action.
 
 ##### Features + Expert Interface
 - [ ] Right click menu --> Make node an expert
@@ -23,9 +23,9 @@
 
 ### Log Interface
 - [ ] View/modify and Offline supervision options
-- [ ] Change "critical feature" to "reason"
 - [ ] Expand option to include CCTV footage, the decision rule used, additional info
 - [ ] decision_path Parser
+- [x] Change "critical feature" to "reason"
 
 ### Map
 - [x] Markers link to meta controller
