@@ -10,6 +10,26 @@ mainTree = {
     "head": 0
 }
 
+function convertLeafLabelAction(tree=mainTree){
+    let leaves = getLeaves(tree)
+    for (var leaf_key of leaves){
+        if (tree["nodes"][leaf_key]["action"]==undefined){
+            continue
+        }
+        tree["nodes"][leaf_key]["label"] = tree["nodes"][leaf_key]["action"]
+    }
+}
+
+function getLeaves(tree=mainTree){
+    var leaves = []
+    for (let node in tree["nodes"]){
+        if (tree["edges"][node].length != 1 && tree["edges"][node].length!=2){
+            leaves.push(node)
+        }
+    }
+    return leaves
+}
+
 function instantiateSVG(legend = true) {
     var svg = d3.select("#svg").append("svg")
         .attr("width", width + margin.right + margin.left)
@@ -79,28 +99,22 @@ var drag = d3.behavior.drag()
     .on('dragend', function (d) {
         d3.select(this).remove()
         var nearNode = nearestNode(d.x, d.y)
-        console.log("Nearest Node" + nearNode)
         var [newN, newE] = mergeTrees(mainTree["nodes"], trees[d.id]["nodes"],
             mainTree["edges"], trees[d.id]["edges"],
             nearNode, trees[d.id]["head"])
-        // console.log(newN)
         var [n, e] = getNodePositions(newN, newE, mainTree["head"], width / 2, 25, -1, false)
         mainTree["nodes"] = n
         mainTree["edges"] = e
-        console.log("Post drag main tree")
-        console.log(mainTree)
         resetNodes()
         drawLegend();
     })
 
 function nearestNode(x, y) {
-    console.log("node nearest to: (" + x + "," + y + ")")
     var minDist = Infinity
     var minNode = null
     for (var node in mainTree["nodes"]) {
         var diffX = mainTree["nodes"][node]["x"] - x
         var diffY = mainTree["nodes"][node]["y"] + margin.top - 15 - y //y is offset from 200, and circle -15 from that
-        console.log("delta x: " + diffX + "... delta y: " + diffY)
         var dist = Math.sqrt(diffX * diffX + diffY * diffY)
         if (dist < minDist) {
             minNode = node
@@ -135,7 +149,6 @@ function drawLegend() {
         .call(drag)
         .on('click', function () {
             if (d3.event.defaultPrevented) return;
-            console.log('clicked');
         });
     // .on("ondragstart", dragged)
 
@@ -151,6 +164,7 @@ function drawTree() {
     var nodes = mainTree["nodes"]
     var edges = mainTree["edges"]
     var head = mainTree["head"]
+    convertLeafLabelAction(mainTree)
 
     let duration = 400
     var i = 0
@@ -325,11 +339,7 @@ function drawTree() {
     }
 
     function handleRightClick(d, i) {
-        console.log("handle right click")
         rightClickNode = d
-        console.log(d, i)
-        console.log(d3.event.pageX);
-        console.log(document.getElementById("tree-right-click-menu"))
         var menu = document.getElementById("tree-right-click-menu")
         menu.style.left = d3.event.pageX + "px"
         menu.style.top = d3.event.pageY + "px"
@@ -431,10 +441,8 @@ function drawTree() {
 
         // Enter is released
         if (e.keyCode == 13) {
-            console.log("Enter is released")
             var newString = mainTree["nodes"][field]["label"].replace(d, e.target.value)
             mainTree["nodes"][field]["label"] = newString
-            console.log(mainTree)
             e.target.remove()
             resetNodes()
         };

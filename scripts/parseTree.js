@@ -41,14 +41,17 @@ function parseDot(text) {
             let attributeList = arr[line].substring(space + 2, arr[line].length - 3).split("\\n")
             attributeList[0] = attributeList[0].substring(7, attributeList[0].length)
             s = ""
-            for (let entry of attributeList) {
-                if (entry.includes("class")) {
-                    continue
-                }
-                s += entry + "\n"
-            }
+            s += attributeList[0]
+            // for (let entry of attributeList) {
+            //     if (entry.includes("class")) {
+            //         continue
+            //     }
+            //     s += entry + "\n"
+            // }
+            var lastItem = attributeList[attributeList.length - 1].split(",")[0].slice(0, -1)
+            console.log("Last Item: " + lastItem)
             s = s.trim()
-            nodes[nodeNumber] = { "id": nodeNumber, "label": s, "x": null, "y": null }
+            nodes[nodeNumber] = { "id": nodeNumber, "label": s, "action": lastItem, "x": null, "y": null }
         }
     }
     head = getHeadLabel(edges)
