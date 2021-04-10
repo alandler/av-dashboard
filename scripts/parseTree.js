@@ -49,7 +49,6 @@ function parseDot(text) {
             //     s += entry + "\n"
             // }
             var lastItem = attributeList[attributeList.length - 1].split(",")[0].slice(0, -1)
-            console.log("Last Item: " + lastItem)
             s = s.trim()
             nodes[nodeNumber] = { "id": nodeNumber, "label": s, "action": lastItem, "x": null, "y": null }
         }

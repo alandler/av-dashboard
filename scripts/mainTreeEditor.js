@@ -116,7 +116,40 @@ function deleteRecursive(nodeID) {
     delete mainTree["nodes"][nodeID]
 }
 
-function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left) {
+function checkNodePositionsWithinSVGBounds(tree = mainTree){
+    for (var nodeID in tree["nodes"]){
+        if (tree["nodes"][nodeID]<=0 || tree["nodes"][nodeID]>=width){
+            return true
+        }
+    }
+    return false
+}
+
+function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left, maxDepth){
+    if (parentDepth == -1) {
+        nodes[source]['x'] = parentX
+        nodes[source]['y'] = parentY
+    }
+    else {
+        var xShift = 2^(maxDepth-parentDepth-1)
+        nodes[source]['x'] = left ? parentX - xShift : parentX + xShift
+        nodes[source]['y'] = parentY + 100
+    }
+    nodes[source]["depth"] = parentDepth + 1
+    nodes[source]['shown'] = true
+    if (edges[source] == undefined || edges[source].length == 0) {
+        edges[source] = []
+    }
+    else if (edges[source].length == 1) {
+        [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true, maxDepth)
+    } else {
+        [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true, maxDepth)
+        [nodes, edges] = getNodePositions(nodes, edges, edges[source][1], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], false,maxDepth)
+    }
+    return [nodes, edges]
+}
+
+function getNodePositionsOverlap(nodes, edges, source, parentX, parentY, parentDepth, left) {
     if (parentDepth == -1) {
         nodes[source]['x'] = parentX
         nodes[source]['y'] = parentY

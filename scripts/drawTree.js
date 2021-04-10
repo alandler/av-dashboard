@@ -5,7 +5,7 @@ margin = { top: 200, right: 10, bottom: 10, left: 10 },
     height = 2000 - margin.top - margin.bottom;
 
 mainTree = {
-    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true } },
+    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth":0} },
     "edges": { 0: [] },
     "head": 0
 }
@@ -28,6 +28,32 @@ function getLeaves(tree=mainTree){
         }
     }
     return leaves
+}
+
+function autosizeSVGWidthHeight(tree=mainTree){
+    var maxDepth = getMaxDepth(tree)
+    var numNodes = 2^maxDepth
+    var numGaps = numNodes/2-1
+    var maxWidth = 65*(numNodes+numGaps)
+    var maxHeight = 30*maxDepth
+
+    if (maxWidth>width){
+        width = maxWidth
+    }
+    if (maxHeight>height){
+        height=maxHeight
+    }
+}
+
+function getMaxDepth(tree=mainTree){
+    maxDepth = 0
+    console.log(tree["nodes"])
+    for (var node in tree["nodes"]){
+        if (tree["nodes"][node]["depth"] > maxDepth){
+            maxDepth = tree["nodes"][node]["depth"]
+        }
+    }
+    return maxDepth
 }
 
 function instantiateSVG(legend = true) {
