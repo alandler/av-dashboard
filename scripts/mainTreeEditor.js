@@ -1,4 +1,3 @@
-// ************** Graph editors and extractor *****************
 function getHeadLabel(edges) {
     let possibleHeads = Object.keys(edges)
     for (edge in edges) {
@@ -22,6 +21,8 @@ function updateParent(node, newParent) {
     edges[newParent].push(node)
 }
 
+// ************** Context Menu Functions *****************
+
 function addNewRoot(e) {
     e.preventDefault()
     let nodeLabel = parentNodeForm.elements[0].value;
@@ -42,16 +43,16 @@ function addNewRoot(e) {
     updateTree()
 }
 
-function addParent() {
+function addParent(e, tree = mainTree) {
     // Assert that node doesn't have a parent
     if (getParent(rightClickNode.id) != null) {
         alert("Sorry! That node has a parent already")
         return
     }
     else {
-        let prevID = getNodeMaxID(mainTree["nodes"])
+        let prevID = getNodeMaxID(tree["nodes"])
         let newID = prevID + 1
-        mainTree["nodes"][newID] =
+        tree["nodes"][newID] =
         {
             "id": newID,
             "label": "Default label",
@@ -60,38 +61,45 @@ function addParent() {
             "color": "#999999",
             "shown": true
         }
-        mainTree["edges"][newID] = [rightClickNode.id]
-        mainTree["head"] = newID
+        tree["edges"][newID] = [rightClickNode.id]
+        tree["head"] = newID
         resetNodesWithNewPositions()
     }
     setDisplayNoneContextMenu()
 }
 
-function addLeaf() {
-    if (mainTree["edges"][rightClickNode.id].length == 2) {
+function addLeaf(e, nodeID=rightClickNode,tree=mainTree, nodeColor = "#999999", expertID = undefined) {
+    console.log("Add Leaf" + nodeID)
+    if (nodeID.id != undefined){
+        nodeID=nodeID.id
+    }
+    console.log("Node ID: " + nodeID)
+    console.log(tree)
+    if (tree["edges"][nodeID].length == 2) {
         alert("Leaves full")
     }
     else {
-        let prevID = getNodeMaxID(mainTree["nodes"])
+        let prevID = getNodeMaxID(tree["nodes"])
         let newID = prevID + 1
-        mainTree["nodes"][newID] =
+        tree["nodes"][newID] =
         {
             "id": newID,
             "label": "Default label",
             "x": width / 2,
             "y": 25,
-            "color": "#999999",
-            "shown": true
+            "color": nodeColor,
+            "shown": true,
+            "expertID": expertID        
         }
-        mainTree["edges"][rightClickNode.id].push(newID)
+        tree["edges"][nodeID].push(newID)
         resetNodesWithNewPositions()
     }
     setDisplayNoneContextMenu()
 }
 
-function deleteNode(nodeID) {
+function deleteNode(nodeID, tree=mainTree) {
     //Do not delete head 
-    if (nodeID == mainTree["head"]) {
+    if (nodeID == tree["head"]) { //&& tree["edges"][tree["head"]].length==0
         alert("Sorry, cannot delete the root")
     } else {
         deleteRecursive(nodeID)
@@ -102,76 +110,32 @@ function deleteNode(nodeID) {
     setDisplayNoneContextMenu()
 }
 
-function deleteRecursive(nodeID) {
+function deleteRecursive(nodeID, tree = mainTree) {
     //Delete children
-    for (let edge of mainTree["edges"][nodeID]) {
+    for (let edge of tree["edges"][nodeID]) {
         deleteRecursive(edge)
     }
     //Delete from parent's children
     parentID = getParent(nodeID)
-    arrID = mainTree["edges"][parentID].indexOf(nodeID)
-    mainTree["edges"][parentID].splice(arrID, 1)
+    arrID = tree["edges"][parentID].indexOf(nodeID)
+    tree["edges"][parentID].splice(arrID, 1)
     //Delete self
-    delete mainTree["edges"][nodeID]
-    delete mainTree["nodes"][nodeID]
+    delete tree["edges"][nodeID]
+    delete tree["nodes"][nodeID]
 }
 
-function checkNodePositionsWithinSVGBounds(tree = mainTree){
-    for (var nodeID in tree["nodes"]){
-        if (tree["nodes"][nodeID]<=0 || tree["nodes"][nodeID]>=width){
-            return true
-        }
-    }
-    return false
+function makeExpert(nodeID){
+    setCookie()
+    window.location.href = "expert_creator.html"
 }
 
-function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left, maxDepth){
-    if (parentDepth == -1) {
-        nodes[source]['x'] = parentX
-        nodes[source]['y'] = parentY
-    }
-    else {
-        var xShift = 2^(maxDepth-parentDepth-1)
-        nodes[source]['x'] = left ? parentX - xShift : parentX + xShift
-        nodes[source]['y'] = parentY + 100
-    }
-    nodes[source]["depth"] = parentDepth + 1
-    nodes[source]['shown'] = true
-    if (edges[source] == undefined || edges[source].length == 0) {
-        edges[source] = []
-    }
-    else if (edges[source].length == 1) {
-        [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true, maxDepth)
-    } else {
-        [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true, maxDepth)
-        [nodes, edges] = getNodePositions(nodes, edges, edges[source][1], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], false,maxDepth)
-    }
-    return [nodes, edges]
+function setDisplayNoneContextMenu() {
+    menu = document.getElementById("tree-right-click-menu")
+    menu.classList.add("context-menu")
+    menu.classList.remove("context-menu-active")
 }
 
-function getNodePositionsOverlap(nodes, edges, source, parentX, parentY, parentDepth, left) {
-    if (parentDepth == -1) {
-        nodes[source]['x'] = parentX
-        nodes[source]['y'] = parentY
-    }
-    else {
-        nodes[source]['x'] = left ? parentX - 65 : parentX + 65
-        nodes[source]['y'] = parentY + 100
-    }
-    nodes[source]["depth"] = parentDepth + 1
-    nodes[source]['shown'] = true
-    if (edges[source] == undefined || edges[source].length == 0) {
-        edges[source] = []
-    }
-    else if (edges[source].length == 1) {
-        [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true)
-    } else {
-        [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true)
-        [nodes, edges] = getNodePositions(nodes, edges, edges[source][1], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], false)
-    }
-    return [nodes, edges]
-}
-
+// ************** Graph extractor *****************
 function graphToHierarchyWithPositions(nodes, edges, head, parentX, parentY, left) {
     let result = {}
 
@@ -188,8 +152,6 @@ function graphToHierarchyWithPositions(nodes, edges, head, parentX, parentY, lef
     return result
 }
 
-function setDisplayNoneContextMenu() {
-    menu = document.getElementById("tree-right-click-menu")
-    menu.classList.add("context-menu")
-    menu.classList.remove("context-menu-active")
+function getPartialTree(source, tree=mainTree){
+
 }

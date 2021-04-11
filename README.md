@@ -4,16 +4,16 @@
 
 ### Metacontroller interface
 ##### Bugs
-- [ ] Autosize the SVG based on size
-- [ ] Autoplace nodes to avoid overlap (currently assuming users only need to see one leg of the tree at a time)
-- [ ] Add image representing cells of the intersection
+- [ ] Autosize the SVG based on size (BUGGY)
+- [x ] Autoplace nodes to avoid overlap (currently assuming users only need to see one leg of the tree at a time)
+- [x ] Add image representing cells of the intersection
 - [x] Reduce labels to decision criteria. Leaves only to include action.
 
 ##### Features + Expert Interface
-- [ ] Right click menu --> Make node an expert
-- [ ] Right click menu --> Build expert interface link
 - [ ] If approached this way, when saving the expert, saves to the meta controller
-- [ ] Instead of including experts as entire trees, condense to single node in the meta controller interface (NOTE: Works with existing interface - more a user-defined thing)
+- [x ] Right click menu --> Make node an expert
+- [x ] Right click menu --> Build expert interface link
+- [x ] Instead of including experts as entire trees, condense to single node in the meta controller interface (NOTE: Works with existing interface - more a user-defined thing)
 - [x] Download dotfile
 
 ### Backend Database

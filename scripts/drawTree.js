@@ -1,117 +1,32 @@
-rightClickNode = 0
+rightClickNode = undefined
 
-margin = { top: 200, right: 10, bottom: 10, left: 10 },
+margin = { top: 200, right: 10, bottom: 10, left: 20 },
     width = 1020 - margin.right - margin.left,
     height = 2000 - margin.top - margin.bottom;
 
 mainTree = {
-    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth":0} },
+    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined} },
     "edges": { 0: [] },
     "head": 0
 }
 
-function convertLeafLabelAction(tree=mainTree){
-    let leaves = getLeaves(tree)
-    for (var leaf_key of leaves){
-        if (tree["nodes"][leaf_key]["action"]==undefined){
-            continue
-        }
-        tree["nodes"][leaf_key]["label"] = tree["nodes"][leaf_key]["action"]
-    }
+expertTree = {
+    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined} },
+    "edges": { 0: [] },
+    "head": 0
 }
 
-function getLeaves(tree=mainTree){
+nodeGap = 10
+
+function getLeaves(tree = mainTree) {
     var leaves = []
-    for (let node in tree["nodes"]){
-        if (tree["edges"][node].length != 1 && tree["edges"][node].length!=2){
+    for (let node in tree["nodes"]) {
+        if (tree["edges"][node].length != 1 && tree["edges"][node].length != 2) {
             leaves.push(node)
         }
     }
     return leaves
 }
-
-function autosizeSVGWidthHeight(tree=mainTree){
-    var maxDepth = getMaxDepth(tree)
-    var numNodes = 2^maxDepth
-    var numGaps = numNodes/2-1
-    var maxWidth = 65*(numNodes+numGaps)
-    var maxHeight = 30*maxDepth
-
-    if (maxWidth>width){
-        width = maxWidth
-    }
-    if (maxHeight>height){
-        height=maxHeight
-    }
-}
-
-function getMaxDepth(tree=mainTree){
-    maxDepth = 0
-    console.log(tree["nodes"])
-    for (var node in tree["nodes"]){
-        if (tree["nodes"][node]["depth"] > maxDepth){
-            maxDepth = tree["nodes"][node]["depth"]
-        }
-    }
-    return maxDepth
-}
-
-function instantiateSVG(legend = true) {
-    var svg = d3.select("#svg").append("svg")
-        .attr("width", width + margin.right + margin.left)
-        .attr("height", height + margin.top + margin.bottom)
-    // .call(d3.zoom().on("zoom", function () {
-    //     svg.attr("transform", d3.event.transform)
-    //  }))
-
-    // Border SVG
-    svg.append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("height", height + margin.top + margin.bottom)
-        .attr("width", width + margin.right + margin.left)
-        .style("stroke", "black")
-        .style("fill", "none")
-        .style("stroke-width", 1);
-
-    if (legend == true) {
-        // Legend border
-        svg.append("rect")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("height", margin.top)
-            .attr("width", width + margin.right + margin.left)
-            .style("stroke", "black")
-            .style("fill", "#FFECD1")
-            .style("stroke-width", 1);
-    }
-}
-// function drag(event) {
-
-//     function dragstarted(event, d) {
-//       console.log("Start")
-//       console.group(event)
-//       console.log(d)
-//       d3.select(this).raise().attr("stroke", "black");
-//     }
-
-//     function dragged(event, d=true) {
-//         console.log("Dragged")
-//         console.group(event)
-//         d3.select(this).attr("x", event.x).attr("y", event.y);
-//       d3.select(this).attr("x", d.x = event.x).attr("y", d.y = event.y);
-//     }
-
-//     function dragended(event, d) {
-//         console.log("Ended")
-//       d3.select(this).attr("stroke", null);
-//     }
-
-//     return d3.drag()
-//         .on("start", dragstarted)
-//         .on("drag", dragged)
-//         .on("end", dragended);
-//   }
 
 var drag = d3.behavior.drag()
     // .origin(function (d) { return d })
@@ -125,14 +40,20 @@ var drag = d3.behavior.drag()
     .on('dragend', function (d) {
         d3.select(this).remove()
         var nearNode = nearestNode(d.x, d.y)
-        var [newN, newE] = mergeTrees(mainTree["nodes"], trees[d.id]["nodes"],
-            mainTree["edges"], trees[d.id]["edges"],
-            nearNode, trees[d.id]["head"])
-        var [n, e] = getNodePositions(newN, newE, mainTree["head"], width / 2, 25, -1, false)
+        // var [newN, newE] = mergeTrees(mainTree["nodes"], trees[d.id]["nodes"],
+        //     mainTree["edges"], trees[d.id]["edges"],
+        //     nearNode, trees[d.id]["head"])
+        // mainTree["nodes"] = newN
+        // mainTree["edges"] = newE
+        addLeaf(undefined, nearNode, mainTree, trees[d.id]["color"], d.id)
+        autosizeSVGWidthHeight()
+        var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false, getMaxDepth(mainTree))
         mainTree["nodes"] = n
         mainTree["edges"] = e
-        resetNodes()
-        drawLegend();
+        setLabelShowns()
+        // resetNodes()
+        // drawLegend();
+        redoSVG();
     })
 
 function nearestNode(x, y) {
@@ -149,6 +70,7 @@ function nearestNode(x, y) {
     }
     return minNode
 }
+
 function drawLegend() {
     d3.selectAll("g.legend").remove()
     var data = []
@@ -186,11 +108,11 @@ function drawLegend() {
         .attr("text-anchor", "start")
 }
 
-function drawTree() {
-    var nodes = mainTree["nodes"]
-    var edges = mainTree["edges"]
-    var head = mainTree["head"]
-    convertLeafLabelAction(mainTree)
+function drawTree(tree = mainTree) {
+    var nodes = tree["nodes"]
+    var edges = tree["edges"]
+    var head = tree["head"]
+    convertLeafLabelAction(tree)
 
     let duration = 400
     var i = 0
@@ -210,9 +132,9 @@ function drawTree() {
     update(head)
 
     function update(source) {
-        var nodes = mainTree["nodes"]
-        var edges = mainTree["edges"]
-        var head = mainTree["head"]
+        var nodes = tree["nodes"]
+        var edges = tree["edges"]
+        var head = tree["head"]
         // console.log("Nodes upon enter update:")
         // console.log(nodes)
         // visibleNodes = Object.values(nodes)
@@ -220,6 +142,8 @@ function drawTree() {
         // console.log(visibleNodes)
 
         //Move new nodes to the end of the list
+        console.log("Child")
+        console.log(getChildren(source))
         childrenIDS = getChildren(source).map(x => x.id)
         visibleNodes = Object.values(nodes).filter(obj => (obj.shown != 0 && !(childrenIDS.includes(obj.id))))
         for (var childID of childrenIDS) {
@@ -243,7 +167,7 @@ function drawTree() {
         var nodeEnter = node.enter()
             .append("g")
             .attr("class", "node")
-            .attr("id", function(d){
+            .attr("id", function (d) {
                 return "node-" + d.id
             })
             .attr("transform", function (d) {
@@ -253,7 +177,7 @@ function drawTree() {
 
         //Add a circle for collapse purposes
         nodeEnter.append("circle")
-            .attr("cy", -15)
+            .attr("cy", -13)
             .attr("r", 5)
             .attr("fill", d => {
                 if (edges[d["id"]].length == 0 || edges[d["id"]][0] == undefined) {
@@ -267,7 +191,7 @@ function drawTree() {
                     return d["color"]
                 }
             })
-            .attr("stroke-width", 10)
+            .attr("stroke-width", 6)
             .attr("stroke", function (d) { return d["color"] })
             .on("click", toggleCollapse)
             .on("contextmenu", function (d, i) {
@@ -275,20 +199,45 @@ function drawTree() {
                 handleRightClick(d, i);
             });
 
-        nodeEnter.append("g")
-            .attr("dy", ".35em")
+        nodeEnter.append("text")
             .attr("text-anchor", "middle")
             .style("fill-opacity", 1)
-            .selectAll("text")
-            .data(d => d.label.split("\n"))
-            .enter().append("text")
-            .text(d => d)
+            .text(function (d) {
+                if (nodes[d["id"]]["show_label"] == undefined || nodes[d["id"]]["show_label"] == false){
+                    return ""
+                } else{
+                    return d["label"]
+                }
+            })
             .attr("dy", function (d, i) {
-                return 12 * i
+                var parent = getParent(d["id"])
+                var j = 0
+                if (parent != null) {
+                    if (d["id"] != edges[parent][0]) {
+                        j = .65
+                    }
+                }
+                return (.05 + j) + "em"
             })
             .on("click", handleLabelClick)
             .on("mouseover", handleLabelMouseOver)
             .on("mouseout", handleLabelMouseOut)
+
+
+        // nodeEnter.append("g")
+        //     .attr("dy", ".35em")
+        //     .attr("text-anchor", "middle")
+        //     .style("fill-opacity", 1)
+        //     .selectAll("text")
+        //     .data(d => d.label.split("\n"))
+        //     .enter().append("text")
+        //     .text(d => d)
+        //     .attr("dy", function (d, i) {
+        //         return 12 * i
+        //     })
+        //     .on("click", handleLabelClick)
+        //     .on("mouseover", handleLabelMouseOver)
+        //     .on("mouseout", handleLabelMouseOut)
 
         //Create links
         links = getLinks(nodes, edges);
@@ -545,27 +494,108 @@ function mergeTrees(nodes1, nodes2, edges1, edges2, target, head2) {
     return [nodes, edges]
 }
 
-function resetNodes() {
-    var svg = d3.select("svg")
-    var node = svg.selectAll("g.tree").remove()
-    drawTree()
-}
-
-function resetNodesWithNewPositions() {
-    var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false)
-    mainTree["nodes"] = n
-    mainTree["edges"] = e
-
-    var svg = d3.select("svg")
-    var node = svg.selectAll("g.tree").remove()
-    drawTree()
-}
-
-function getParent(nodeID) {
-    for (let i in mainTree["edges"]) {
-        if (mainTree["edges"][i].includes(nodeID)) {
+function getParent(nodeID, tree=mainTree) {
+    for (let i in tree["edges"]) {
+        if (tree["edges"][i].includes(nodeID)) {
             return i
         }
     }
     return null
+}
+
+// ************** Toggle/Set Functions *****************
+function toggleLabel(nodeID, tree=mainTree) {
+    console.log("NodeID:"  + nodeID)
+    console.log(tree)
+    if (tree["nodes"][nodeID]["show_label"] == undefined || tree["nodes"][nodeID]["show_label"] == false) {
+        tree["nodes"][nodeID]["show_label"] = true;
+    } else {
+        console.log("set false")
+        tree["nodes"][nodeID]["show_label"] = false;
+    }
+    resetNodes(tree)
+}
+
+function convertLeafLabelAction(tree = mainTree) {
+    let leaves = getLeaves(tree)
+    for (var leaf_key of leaves) {
+        if (tree["nodes"][leaf_key]["action"] == undefined) {
+            continue
+        }
+        tree["nodes"][leaf_key]["label"] = tree["nodes"][leaf_key]["action"]
+    }
+}
+
+// ************** Instantiating Functions *****************
+function setLabelShowns(tree = mainTree){
+    var maxDepth = getMaxDepth(tree)
+    var labelLimit = 3/4
+    for (var node in tree["nodes"]) {
+        if (tree["nodes"][node]["depth"] > maxDepth*labelLimit) {
+            tree["nodes"][node]["show_label"] = false
+        } else{
+            tree["nodes"][node]["show_label"] = true
+        }
+    }
+}
+
+function instantiateSVG(legend = true) {
+    var svg = d3.select("#svg").append("svg")
+        .attr("width", width + margin.right + margin.left)
+        .attr("height", height + margin.top + margin.bottom)
+    // .call(d3.zoom().on("zoom", function () {
+    //     svg.attr("transform", d3.event.transform)
+    //  }))
+
+    // Border SVG
+    svg.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", width + margin.right + margin.left)
+        .style("stroke", "black")
+        .style("fill", "none")
+        .style("stroke-width", 1);
+
+    if (legend == true) {
+        // Legend border
+        svg.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("height", margin.top)
+            .attr("width", width + margin.right + margin.left)
+            .style("stroke", "black")
+            .style("fill", "#FFECD1")
+            .style("stroke-width", 1);
+    }
+}
+// ************** Reset Functions *****************
+function resetNodes(tree=mainTree) {
+    var svg = d3.select("svg")
+    var node = svg.selectAll("g.node").remove()
+    drawTree(tree)
+}
+
+function resetNodesWithNewPositions(tree=mainTree) {
+    autosizeSVGWidthHeight()
+    var [n, e] = getNodePositions(tree["nodes"], tree["edges"], tree["head"], width / 2, 25, -1, false, getMaxDepth(tree))
+    tree["nodes"] = n
+    tree["edges"] = e
+
+    var svg = d3.select("svg")
+    var node = svg.selectAll("g.tree").remove()
+    drawTree(tree)
+}
+
+function redoSVG(tree=mainTree) {
+    var oldWidth = width
+    var svg = d3.select("svg").remove()
+    autosizeSVGWidthHeight(tree)
+    for (var nodeID in mainTree["nodes"]) {
+        tree["nodes"][nodeID]["x"] += width / 2 - oldWidth / 2
+    }
+    console.log("Width:" + width)
+    instantiateSVG()
+    drawLegend()
+    drawTree(tree)
 }

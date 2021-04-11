@@ -49,6 +49,9 @@ function parseDot(text) {
             //     s += entry + "\n"
             // }
             var lastItem = attributeList[attributeList.length - 1].split(",")[0].slice(0, -1)
+            if (lastItem.indexOf("class")!=-1){
+                lastItem = lastItem.substring(8)
+            }
             s = s.trim()
             nodes[nodeNumber] = { "id": nodeNumber, "label": s, "action": lastItem, "x": null, "y": null }
         }

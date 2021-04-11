@@ -28,7 +28,7 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-item nav-link" href="map.html">Map</a>
-                <a class="nav-item nav-link" href="index.html">Meta Controller <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="meta_controller.html">Meta Controller <span class="sr-only">(current)</span></a>
                 <a class="nav-item nav-link active" href="expert_creator.html">Build an Expert</a>
                 <a class="nav-item nav-link" href="logs.html">Logs</a>
                 <a class="nav-item nav-link" href="help.html">Help</a>
@@ -75,6 +75,11 @@
                 <i class="fa fa-edit"></i> Delete Node
                 <!-- </a> -->
             </li>
+            <li class="context-menu-item" onclick="toggleLabel(rightClickNode.id, expertTree)">
+                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
+                <i class="fa fa-edit"></i> Show/Hide Label
+                <!-- </a> -->
+            </li>
             <li class="context-menu-item" onclick="setDisplayNoneContextMenu()">
                 <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
                 <i class="fa fa-edit"></i> Cancel
@@ -91,6 +96,7 @@
 <script src="scripts/require.js"></script>
 <script src="scripts/parseTree.js"></script>
 <script src="scripts/drawTree.js"></script>
+<script src="scripts/sizing.js"></script>
 <script src="scripts/helper.js"></script>
 <script src="scripts/trees.js"></script>
 <script src="scripts/mainTreeEditor.js"></script>
@@ -100,8 +106,17 @@
     width = 1020 - margin.right - margin.left,
     height = 2000 - margin.top - margin.bottom;
 
+    var cookie = parseCookie()
+    console.log(cookie)
     instantiateSVG(false)
-    drawTree()
+    if (cookie["trees"] != undefined){
+        expertTree = cookie["trees"][cookie["rightClickNode"]["id"]]
+        reassignPositions(expertTree)
+        drawTree(expertTree)
+    } else {
+        // tree = mainTree
+        drawTree()
+    }
 </script>
 
 <script src="scripts/tests.js"></script>
