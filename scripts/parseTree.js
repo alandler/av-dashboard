@@ -63,13 +63,13 @@ function parseDot(text) {
 function hardCodeMetaController(){
     var policy = [dt_policy_4, dt_policy_8]
     for (var i = 1; i<3; i++){
-        var [nodes, edges, head] = parseDot(policy[i-1])
-        trees[i] = {"nodes": nodes, "edges": edges, "head": head}
+        var [newNodes, newEdges, newHead] = parseDot(policy[i-1])
+        trees[i] = {"nodes": newNodes, "edges": newEdges, "head": newHead}
         trees[i]["description"] = i==1? "Expert depth 4":"Expert depth 8"
         trees[i]["color"] = colorGenerator()
-        applyColorToNodes(trees[i]["nodes"], trees[i]["color"])
-        console.log("Hard coded trees")
+        setFields(trees[i])
         console.log(trees)
+        applyColorToNodes(trees[i]["nodes"], trees[i]["color"])
     }
     mainTree = {
         "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, 
@@ -81,6 +81,8 @@ function hardCodeMetaController(){
         "edges": { 0: [1,2], 1:[], 2:[] },
         "head": 0,
     }
+    console.log(trees)
+    setFields(mainTree)
     resetNodesWithNewPositions()
 
 }

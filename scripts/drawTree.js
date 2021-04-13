@@ -52,13 +52,11 @@ function nearestNode(x, y) {
 }
 
 function drawLegend() {
-    console.log("Draw legend")
     d3.selectAll("g.legend").remove()
     var data = []
     for (var key in trees) {
         data.push({ "id": key, "x": 10, "y": key * 30, "color": trees[key]["color"], "description": trees[key]["description"] })
     }
-    console.log(data)
     var svg = d3.select("svg")
     var legend = svg.selectAll("g.rect")
         .remove()
@@ -120,8 +118,6 @@ function drawTree(tree = mainTree) {
         var head = tree["head"]
 
         //Only visible nodes
-        console.log("Visible")
-        console.log(nodes)
         var nodeList = Object.values(nodes)
         visibleNodes = nodeList.filter(obj => (obj.shown != 0))
 
@@ -138,7 +134,6 @@ function drawTree(tree = mainTree) {
                 return "node-" + d.id
             })
             .attr("transform", function (d) {
-                // console.log("Change: " + d.id)
                 return "translate(" + d.x + "," + d.y + ")";
             })
 
@@ -154,7 +149,6 @@ function drawTree(tree = mainTree) {
                 //     return "#ffffff"
                 // }
                 else {
-                    // console.log("Fill" + d["color"])
                     return d["color"]
                 }
             })
@@ -177,10 +171,10 @@ function drawTree(tree = mainTree) {
                 }
             })
             .attr("dy", function (d, i) {
-                var parent = getParent(d["id"])
+                var parent = getParent(d["id"], tree)
                 var j = 0
                 if (parent != null) {
-                    if (d["id"] != edges[parent][0]) {
+                    if (d["id"] != edges[parent][0] && d["depth"]>5) {
                         j = .65
                     }
                 }
@@ -224,7 +218,6 @@ function drawTree(tree = mainTree) {
         var nodeExit = node.exit().transition()
             .duration(duration)
             .attr("transform", function (d) {
-                console.log(d)
                 return "translate(" + nodes[source].x + "," + nodes[source].y + ")";
             })
             .remove();
@@ -265,11 +258,7 @@ function drawTree(tree = mainTree) {
     }
 
     function toggleCollapse(d) {
-        console.log("toggle collpase")
-        console.log(visibleNodes)
         let children = getChildren(d.id)
-        // console.log("Children of " + d.id)
-        // console.log(children)
         if (children.length == 0) {
             return
         } else if (children[0].shown) {
@@ -400,8 +389,6 @@ function getNodeMaxID(nodes) {
 }
 
 function mergeTrees(nodes1, nodes2, edges1, edges2, target, head2) {
-    // console.log("MergeTrees")
-    // console.log(edges2)
     //Sanity checks
     if (!(target in Object.keys(nodes1))) {
         alert("Target is not in the destination tree")
@@ -455,10 +442,6 @@ function mergeTrees(nodes1, nodes2, edges1, edges2, target, head2) {
     var nodes = { ...nodes1, ...nodes2 }
     var edges = { ...edges1, ...edges2 }
     edges[target].push(head2) //Add the link from the target node to the second tree's head
-    // console.log("NODES")
-    // console.log(nodes)
-    // console.log("EDGES")
-    // console.log(edges)
 
     return [nodes, edges]
 }
@@ -474,15 +457,13 @@ function getParent(nodeID, tree=mainTree) {
 
 // ************** Toggle/Set Functions *****************
 function toggleLabel(nodeID, tree=mainTree) {
-    console.log("NodeID:"  + nodeID)
-    console.log(tree)
     if (tree["nodes"][nodeID]["show_label"] == undefined || tree["nodes"][nodeID]["show_label"] == false) {
         tree["nodes"][nodeID]["show_label"] = true;
     } else {
-        console.log("set false")
         tree["nodes"][nodeID]["show_label"] = false;
     }
     resetNodes(tree)
+    setDisplayNoneContextMenu()
 }
 
 function convertLeafLabelAction(tree = mainTree) {
@@ -500,9 +481,10 @@ function setLabelShowns(tree = mainTree){
     var maxDepth = getMaxDepth(tree)
     var labelLimit = 3/4
     for (var node in tree["nodes"]) {
-        if (tree["nodes"][node]["depth"] > maxDepth*labelLimit) {
+        if (tree["nodes"][node]["depth"] > maxDepth*labelLimit-1) {
             tree["nodes"][node]["show_label"] = false
         } else{
+            console.log("Show label")
             tree["nodes"][node]["show_label"] = true
         }
     }
@@ -546,7 +528,8 @@ function resetNodes(tree=mainTree) {
 }
 
 function resetNodesWithNewPositions(tree=mainTree) {
-    autosizeSVGWidthHeight()
+    autosizeSVGWidthHeight(tree)
+    console.log(nodeGap)
     var [n, e] = getNodePositions(tree["nodes"], tree["edges"], tree["head"], width / 2, 25, -1, false, getMaxDepth(tree))
     tree["nodes"] = n
     tree["edges"] = e
@@ -563,8 +546,9 @@ function redoSVG(tree=mainTree) {
     for (var nodeID in mainTree["nodes"]) {
         tree["nodes"][nodeID]["x"] += width / 2 - oldWidth / 2
     }
-    console.log("Width:" + width)
     instantiateSVG()
+    if (tree == mainTree){
     drawLegend()
+    }
     drawTree(tree)
 }

@@ -69,12 +69,9 @@ function addParent(e, tree = mainTree) {
 }
 
 function addLeaf(e, nodeID=rightClickNode,tree=mainTree, nodeColor = "#999999", expertID = undefined) {
-    console.log("Add Leaf" + nodeID)
     if (nodeID.id != undefined){
         nodeID=nodeID.id
     }
-    console.log("Node ID: " + nodeID)
-    console.log(tree)
     if (tree["edges"][nodeID].length == 2) {
         alert("Leaves full")
     }
@@ -125,7 +122,7 @@ function deleteRecursive(nodeID, tree = mainTree) {
 }
 
 function makeExpert(nodeID){
-    setCookie()
+    setSessionStorage()
     window.location.href = "expert_creator.html"
 }
 

@@ -27,31 +27,3 @@ function applyColorToNodes(nodes, color){
     }
     return nodes
 }
-
-function setCookie(){
-    document.cookie = jsonifyGlobalVariables()
-}
-
-function parseCookie(){
-    var obj = {}
-    if (document.cookie != "" && document.cookie != undefined){
-        obj = JSON.parse(document.cookie);
-    } else {
-        obj = {}
-    }
-    return obj
-}
-
-function jsonifyGlobalVariables(){
-    var master = {}
-    master["rightClickNode"] = rightClickNode
-    master["mainTree"] = mainTree
-    master["expertTree"] = expertTree
-    master["width"] = width
-    master["margin"] = margin
-    master["height"] = height
-    master["nodeGap"] = nodeGap
-    master["trees"] = trees
-
-    return JSON.stringify(master)
-}

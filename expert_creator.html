@@ -52,6 +52,7 @@
                 <div class="row">
                     <div class="col upload">
                         <button id = "export-dotfile" onclick = "writeDot()">Export dotfile</button>
+                        <button id = "export-dotfile" onclick = "saveExpert()">Save expert</button>
                     </div>
                 </div>
             </div>
@@ -93,6 +94,7 @@
 <!-- <script src="https://d3js.org/d3-dispatch.v2.min.js"></script>
 <script src="https://d3js.org/d3-selection.v2.min.js"></script> -->
 <!-- <script src="https://d3js.org/d3-drag.v2.min.js"></script> -->
+<script src="scripts/globalVariables.js"></script>
 <script src="scripts/require.js"></script>
 <script src="scripts/parseTree.js"></script>
 <script src="scripts/drawTree.js"></script>
@@ -106,16 +108,24 @@
     width = 1020 - margin.right - margin.left,
     height = 2000 - margin.top - margin.bottom;
 
-    var cookie = parseCookie()
-    console.log(cookie)
+    var storedTrees = parseSessionStorage("trees")
+    var storedRightClickNode = parseSessionStorage("rightClickNode")
     instantiateSVG(false)
-    if (cookie["trees"] != undefined){
-        expertTree = cookie["trees"][cookie["rightClickNode"]["id"]]
-        reassignPositions(expertTree)
-        drawTree(expertTree)
-    } else {
-        // tree = mainTree
+    if (storedTrees == undefined || storedTrees == {}){
         drawTree()
+    } else {
+        expertTree = storedTrees[storedRightClickNode["id"]]
+        console.log(nodeGap)
+        console.log(expertTree)
+        setLabelShowns(expertTree)
+        resetNodesWithNewPositions(expertTree)
+        redoSVG(expertTree)
+    }
+
+    function saveExpert(){
+        trees = storedTrees
+        storedTrees[storedRightClickNode["id"]] = expertTree
+        setSessionStorage()
     }
 </script>
 

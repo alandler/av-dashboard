@@ -123,19 +123,15 @@
 <script src="scripts/trees.js"></script>
 <script src="scripts/mainTreeEditor.js"></script>
 <script>
-    console.log(document.cookie)
     // ************** Event listener for file input *****************
     const inputFileDiv = document.getElementById("file-selector-1")
-    inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], e.target.id.substring(14)))
+    inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], getNextTreeID())) //e.target.id.substring(14)
     var lastID = Object.keys(trees) == undefined ? 1: Math.max(Object.keys(trees))
-    console.log(lastID)
+
 
     // ************** Hard code meta controller *****************
-    console.log(mainTree)
     if (mainTree["nodes"][0]["label"] == "Root node" && mainTree["edges"][0].length == 0){
-        console.log("Hard code meta controller")
         hardCodeMetaController()
-        console.log(mainTree)
     }
 
     instantiateSVG()

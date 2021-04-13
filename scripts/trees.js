@@ -14,10 +14,10 @@ function addInputDiv(){
 }
 
 async function handleDotfileUpload(file, treeID){
-    // console.log(file)
     // var treeID = e.target.id.substring(14)
     // var file = e.target.files[0]
     var tree = await treeFromFile(file)
+    setDepths(tree)
     var maxDepth = getMaxDepth(tree)
     var [n, e] = getNodePositions(tree["nodes"], tree["edges"], tree["head"], (treeID)*85, -70, -1, false, maxDepth) //TODO wtf is the positioning here
     tree["nodes"] = n
