@@ -47,7 +47,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-9" id="log">
+            <div class="col-7" id="log">
                 <table class="table table-bordered table-light table-hover" id="log">
                     <caption>Online Supervision Log</caption>
                     <thead>
@@ -60,72 +60,66 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr id="log1" onclick="expandRow(this)">
                             <td>1/1/21 10:00am</td>
-                            <td> NS Green </td>
-                            <td> EW Green </td>
-                            <td>Queue Length</td>
-                            <td class="approval"><button onclick="approveChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-                                <path
-                                    d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
-                            </svg></button>
-                            <button onclick="rejectChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                              </svg></button>
-                        </td>
+                            <td> green for phase 0 (vertical flow) </td>
+                            <td> green for phase 2 (horizontal flow) </td>
+                            <td>Presence of more emergency vehicles in east-west and west-east directions</td>
+                            <td class="approval"><button onclick="approveChange(this)"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-check" viewBox="0 0 16 16">
+                                        <path
+                                            d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                                    </svg></button>
+                                <button onclick="rejectChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                        height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                        <path
+                                            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                    </svg></button>
+                            </td>
                         </tr>
-                        <tr>
+                        <tr id="log2" onclick="expandRow(this)">
                             <td>1/1/21 10:47am</td>
-                            <td> NS Green </td>
-                            <td> EW Green </td>
-                            <td>Queue Length</td>
-                            <td class="approval"><button onclick="approveChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-                                <path
-                                    d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
-                            </svg></button>
-                            <button onclick="rejectChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                              </svg></button>
-                        </td>
+                            <td> green for phase 2 (horizontal flow) </td>
+                            <td> green for phase 0 (vertical flow)</td>
+                            <td>RL Expert is undecided on the actions</td>
+                            <td class="approval"><button onclick="approveChange(this)"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-check" viewBox="0 0 16 16">
+                                        <path
+                                            d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                                    </svg></button>
+                                <button onclick="rejectChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                        height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                        <path
+                                            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                    </svg></button>
+                            </td>
                         </tr>
-                        <tr>
+                        <tr id="log3" onclick="expandRow(this)">
                             <td>1/3/21 11:21am</td>
-                            <td> NS Green </td>
-                            <td> EW Green </td>
-                            <td>Queue Length</td>
-                            <td class="approval"><button onclick="approveChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-                                <path
-                                    d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
-                            </svg></button>
-                            <button onclick="rejectChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                              </svg></button>
-                        </td>
-                        </tr>
-                        <tr>
-                            <td>1/4/21 1:40pm</td>
-                            <td> EW Green </td>
-                            <td> NS Green </td>
-                            <td>Queue Length</td>
-                            <td class="approval"><button onclick="approveChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-                                <path
-                                    d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
-                            </svg></button>
-                            <button onclick="rejectChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                              </svg></button>
-                        </td>
+                            <td> green for phase 0 (NS and SN)</td>
+                            <td> green for phase 1 (SW and NE) </td>
+                            <td>The decision tree and RL expert disagree on the proposed actions </td>
+                            <td class="approval"><button onclick="approveChange(this)"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-check" viewBox="0 0 16 16">
+                                        <path
+                                            d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                                    </svg></button>
+                                <button onclick="rejectChange(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                        height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                        <path
+                                            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                    </svg></button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="col-3 align-content-start control-panel">
+            <div class="col-5 align-content-start control-panel">
                 <div class="row">
-                    <div class="col upload">
+                    <div class="col upload" id="footage">
                         <b>Click here to link CCTV footage</b>
                     </div>
                 </div>
@@ -148,6 +142,10 @@
 <script src="scripts/mainTreeEditor.js"></script>
 <script src="scripts/writeDot.js"></script>
 <script>
+    log1expanded = false
+    log2expanded = false
+    log3expanded = false
+
     margin = { top: 10, right: 10, bottom: 10, left: 10 },
         width = 1020 - margin.right - margin.left,
         height = 2000 - margin.top - margin.bottom;
@@ -155,15 +153,135 @@
     instantiateSVG(false)
     drawTree()
 
-    function approveChange(e){
+    function approveChange(e) {
         e.parentNode.parentNode.remove()
         alert("Added to controller.")
-        
+
     }
 
-    function rejectChange(e){
+    function rejectChange(e) {
         e.parentNode.parentNode.remove()
         alert("Rejected.")
+    }
+
+
+
+    function expandRow(row) {
+        if (row.id == "log1") {
+            if (log1expanded == false) {
+                collapseAll()
+                var newRow = document.createElement("tr")
+                var content = document.createElement("td")
+                content.colSpan = "5"
+
+                content.innerHTML = "<b>Proposed Expert</b><br/>\
+                If a vehicle present in cell 20 <br/>\
+                If no vehicle present in cell 0 <br/>\
+                If no vehicle present in cell 50 <br/>\
+                If a vehicle present in cell 30 <br/>\
+                If no vehicle present in cell 61<br/>\
+                If no vehicle present in cell 71<br/>\
+                If no vehicle present in cell 31 <br/>\
+                => phase 0 (NS and SN)<br/>"
+                log1expanded = true
+                newRow.appendChild(content)
+                row.parentNode.insertBefore(newRow, row.nextSibling);
+                setImage(row)
+            } else {
+                row.nextSibling.remove()
+                log1expanded = false
+                removeImage()
+            }
+        }
+        if (row.id == "log2") {
+            console.log("Log 2")
+            if (log2expanded == false) {
+                collapseAll()
+                var newRow = document.createElement("tr")
+                var content = document.createElement("td")
+                content.colSpan = "5"
+
+                content.innerHTML = "RL Expert's confidence levels for each action are as below\
+                                -Phase 0: 26%\
+                                -Phase 1: 21%\
+                                -Phase 2: 31%\
+                                -Phase 3: 22%<br/>\
+                                <b>Proposed Expert</b><br/>\
+                                If no vehicle present in cell 20 <br/>\
+                                If no vehicle present in cell 0  <br/>\
+                                If no vehicle present in cell 30  <br/>\
+                                If a vehicle present in cell 50  <br/>\
+                                If no vehicle present in cell 60 <br/>\
+                                If no vehicle present in cell 70 <br/>\
+                                If no vehicle present in cell 10 <br/>\
+                                => phase 2 (EW and WE)"
+
+                log2expanded = true
+                newRow.appendChild(content)
+                row.parentNode.insertBefore(newRow, row.nextSibling);
+                setImage(row)
+            } else {
+                row.nextSibling.remove()
+                log2expanded = false
+                removeImage()
+            }
+        }
+        if (row.id == "log3") {
+            if (log3expanded == false) {
+                collapseAll()
+                var newRow = document.createElement("tr")
+                var content = document.createElement("td")
+                content.colSpan = "5"
+
+                content.innerHTML = "RL action: green for phase 3 (EN and WS)<br/>\
+                <b>Proposed Expert</b><br/>\
+                If a vehicle present in cell 20 <br/>\
+                If no vehicle present in cell 0  <br/>\
+                If no vehicle present in cell 50  <br/>\
+                If a vehicle present in cell 30  <br/>\
+                If no vehicle present in cell 61 <br/>\
+                If no vehicle present in cell 71 <br/>\
+                If no vehicle present in cell 31 <br/>\
+                => phase 0 (NS and SN)"
+                log3expanded = true
+                newRow.appendChild(content)
+                row.parentNode.insertBefore(newRow, row.nextSibling);
+                setImage(row)
+            } else {
+                row.nextSibling.remove()
+                log3expanded = false
+                removeImage()
+            }
+        }
+    }
+
+    function setImage(row) {
+        document.getElementById("footage")
+        var img = document.createElement("img")
+        var logID = row.id.substring(3)
+        img.src = "images/scenario" + logID + ".png"
+        img.style.width = "100%"
+        footage.appendChild(img)
+    }
+
+    function collapseAll(){
+        if (log1expanded==true){
+        document.getElementById("log1").nextSibling.remove()
+        log1expanded=false
+        }
+        if (log2expanded==true){
+        document.getElementById("log2").nextSibling.remove()
+        log2expanded=false
+        }
+        if (log3expanded==true){
+        document.getElementById("log3").nextSibling.remove()
+        log3expanded=false
+        }
+        removeImage()
+    }
+
+    function removeImage() {
+        document.getElementById("footage").innerHTML = ("Image will appear when you click on a log")
     }
 
 </script>
