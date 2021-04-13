@@ -134,7 +134,9 @@
 <script src="scripts/trees.js"></script>
 <script src="scripts/mainTreeEditor.js"></script>
 <script>
+    // localVariablesSessionStorage()
     height = 600
+    colorsUsed= parseSessionStorage("colorsUsed")
     // ************** Event listener for file input *****************
     const inputFileDiv = document.getElementById("file-selector-1")
     inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], getNextTreeID())) //e.target.id.substring(14)
@@ -144,6 +146,7 @@
     // ************** Hard code meta controller *****************
     if (parseSessionStorage("mainTree") != undefined) {
         mainTree = parseSessionStorage("mainTree")
+        console.log(mainTree)
     }
     if (mainTree["nodes"][0]["label"] == "Root node" && mainTree["edges"][0].length == 0) {
         hardCodeMetaController()

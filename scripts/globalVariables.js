@@ -18,6 +18,12 @@ expertTree = {
     "head": 0
 }
 
+plainTree = {
+    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined } },
+    "edges": { 0: [] },
+    "head": 0
+}
+
 nodeGap = 10
 
 colorsUsed = []
@@ -36,6 +42,18 @@ function parseSessionStorage(key = "all") {
         return undefined
     }
 }
+
+// function localVariablesSessionStorage() {
+//     rightClickNode = parseSessionStorage("rightClickNode")
+//     mainTree = parseSessionStorage("mainTree")
+//     expertTree = parseSessionStorage("expertTree")
+//     width = parseSessionStorage("width")
+//     height = parseSessionStorage("height")
+//     margin = parseSessionStorage("margin")
+//     nodeGap = parseSessionStorage("nodeGap")
+//     addExpert = parseSessionStorage("addExpert")
+//     colorsUsed = parseSessionStorage("colorsUsed")
+// }
 
 addExpert = false
 

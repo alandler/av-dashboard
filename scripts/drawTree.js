@@ -466,6 +466,7 @@ function getParent(nodeID, tree = mainTree) {
 
 // ************** Toggle/Set Functions *****************
 function toggleLabel(nodeID, tree = mainTree) {
+    console.log(tree)
     if (tree["nodes"][nodeID]["show_label"] == undefined || tree["nodes"][nodeID]["show_label"] == false) {
         tree["nodes"][nodeID]["show_label"] = true;
     } else {

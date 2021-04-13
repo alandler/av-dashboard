@@ -109,13 +109,17 @@
     width = 1020 - margin.right - margin.left,
     height = 2000 - margin.top - margin.bottom;
 
+    colorsUsed= parseSessionStorage("colorsUsed")
+
     var storedTrees = parseSessionStorage("trees")
     var storedRightClickNode = parseSessionStorage("rightClickNode")
     instantiateSVG(false)
     var newExpert = true
     if (storedTrees == undefined || Object.keys(storedTrees).length ==0 || storedRightClickNode==undefined){
         addExpert = true
-        drawTree()
+        Object.assign(expertTree, plainTree)
+        mainTree = expertTree
+        drawTree(expertTree)
     } else {
         var newExpert = false
         expertTree = storedTrees[storedRightClickNode["id"]]
@@ -128,7 +132,8 @@
         trees = storedTrees
         if (addExpert == true){
             var metaController = parseSessionStorage("mainTree")
-            expertTree = mainTree 
+            Object.assign(mainTree, expertTree) 
+            mainTree = metaController
             var treeID = undefined
             try {treeID= getNextTreeID()}
             catch{treeID= 1}
@@ -153,9 +158,12 @@
     }
 
     function clearRightClickNode(){
+        width = 1020 - margin.right - margin.left,
         sessionStorage["rightClickNode"] = undefined
         Object.assign(expertTree,mainTree)
-        redoSVG(expertTree)
+        var svg = d3.select("svg").remove()
+        instantiateSVG(false)
+        drawTree()
     }
 </script>
 

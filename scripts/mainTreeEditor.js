@@ -89,6 +89,8 @@ function addLeaf(e, nodeID = rightClickNode, tree = mainTree, nodeColor = "#9999
             "expertID": expertID
         }
         tree["edges"][nodeID].push(newID)
+        console.log("Push node")
+        console.log(tree)
         resetNodesWithNewPositions()
     }
     setDisplayNoneContextMenu()
