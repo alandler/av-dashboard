@@ -5,9 +5,11 @@
 ### Metacontroller interface
 ##### Bugs
 - [ ] Autosize the SVG based on size (BUGGY)
-- [x ] Autoplace nodes to avoid overlap (currently assuming users only need to see one leg of the tree at a time)
-- [x ] Add image representing cells of the intersection
-- [x] Reduce labels to decision criteria. Leaves only to include action.
+- [ x ] Autoplace nodes to avoid overlap (currently assuming users only need to see one leg of the tree at a time)
+- [ x ] Add image representing cells of the intersection
+- [ x ] Reduce labels to decision criteria. Leaves only to include action.
+- [ x ] Fix collapse
+- [ x ] Fix text updates
 
 ##### Features + Expert Interface
 - [ ] If approached this way, when saving the expert, saves to the meta controller
