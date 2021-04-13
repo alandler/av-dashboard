@@ -47,7 +47,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-7" id="log">
+            <div class="col-8" id="log">
                 <table class="table table-bordered table-light table-hover" id="log">
                     <caption>Online Supervision Log</caption>
                     <thead>
@@ -62,8 +62,8 @@
                     <tbody>
                         <tr id="log1" onclick="expandRow(this)">
                             <td>1/1/21 10:00am</td>
-                            <td> green for phase 0 (vertical flow) </td>
-                            <td> green for phase 2 (horizontal flow) </td>
+                            <td> green for phase 0 (NS and SN) </td>
+                            <td> green for phase 2 (EW and WE) </td>
                             <td>Presence of more emergency vehicles in east-west and west-east directions</td>
                             <td class="approval"><button onclick="approveChange(this)"><svg
                                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -80,8 +80,8 @@
                         </tr>
                         <tr id="log2" onclick="expandRow(this)">
                             <td>1/1/21 10:47am</td>
-                            <td> green for phase 2 (horizontal flow) </td>
-                            <td> green for phase 0 (vertical flow)</td>
+                            <td> green for phase 2 (EW and WE) </td>
+                            <td> green for phase 0 (NS and SN)</td>
                             <td>RL Expert is undecided on the actions</td>
                             <td class="approval"><button onclick="approveChange(this)"><svg
                                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -117,7 +117,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-5 align-content-start control-panel">
+            <div class="col-4 align-content-start control-panel">
                 <div class="row">
                     <div class="col upload" id="footage">
                         <b>Click here to link CCTV footage</b>
@@ -178,7 +178,7 @@
                 var content = document.createElement("td")
                 content.colSpan = "5"
 
-                content.innerHTML = "<b>Proposed Expert</b><br/>\
+                content.innerHTML = "<b>Decision rule used by decision tree</b><br/>\
                 If a vehicle present in cell 20 <br/>\
                 If no vehicle present in cell 0 <br/>\
                 If no vehicle present in cell 50 <br/>\
@@ -205,12 +205,12 @@
                 var content = document.createElement("td")
                 content.colSpan = "5"
 
-                content.innerHTML = "RL Expert's confidence levels for each action are as below\
-                                -Phase 0: 26%\
-                                -Phase 1: 21%\
-                                -Phase 2: 31%\
-                                -Phase 3: 22%<br/>\
-                                <b>Proposed Expert</b><br/>\
+                content.innerHTML = "RL Expert's confidence levels for each action are as below<br/>\
+                                - Phase 0: 26%<br/>\
+                                - Phase 1: 21%<br/>\
+                                - Phase 2: 31%<br/>\
+                                - Phase 3: 22%<br/>\
+                                <b>Decision rule used by decision tree</b><br/>\
                                 If no vehicle present in cell 20 <br/>\
                                 If no vehicle present in cell 0  <br/>\
                                 If no vehicle present in cell 30  <br/>\
@@ -238,7 +238,7 @@
                 content.colSpan = "5"
 
                 content.innerHTML = "RL action: green for phase 3 (EN and WS)<br/>\
-                <b>Proposed Expert</b><br/>\
+                <b>Decision rule used by decision tree</b><br/>\
                 If a vehicle present in cell 20 <br/>\
                 If no vehicle present in cell 0  <br/>\
                 If no vehicle present in cell 50  <br/>\
