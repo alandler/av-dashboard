@@ -39,9 +39,9 @@
     </nav>
 
     <div id="heading">
-        <h1>
-            DTLight: Reinforcement Learning Traffic Control Dashboard
-        </h1>
+        <h2>
+            Meta Controller : Intersection 152 : Mass Av.
+        </h2>
         <b id="instructions">Instructions</b>
         <p>Upload a dotfile to start. It will appear in the gray portion of the image below as part of a legend. Drag
             the
@@ -54,8 +54,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-9" id="svg"></div>
-            <div class="col-3 align-content-start control-panel">
+            <div class="col-3" >
                 <div class="row">
                     <div class="col upload">
                         <label for="file-selector-1">Upload dotfiles:</label>
@@ -67,22 +66,27 @@
                         </div>
                     </div>
                 </div>
+                <p> The bird's view of the selected intersection </p>
+                <img width = "100%" src = "images/satellite_view.png">
+                <br>
+                <p> The street view of the selected intersection </p>
+                <img width = "100%" src = "images/street_view.png">
+            </div>
+            <div class="col-6" id="svg"></div>
+            <div class="col-3">
+                <div class="row state">
+                    <p> State space diagram of the selected intersection </p>
+                </div>
                 <div class="row">
                     <div class="col">
-                        <b>State space diagram</b>
                         <img width="95%" src="images/states.png" />
                     </div>
                 </div>
+                <div class="row">
+                    <br>
+                    <p> Each road segment is divided into cells and the input to the model consist of 80 such cells. </p>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <img width = "100%" src = "images/satellite_view.png">
-            </div>
-            <div class="col-6">
-                <img width = "100%" src = "images/street_view.png">
-            </div>
-            
         </div>
     </div>
 
@@ -139,7 +143,7 @@
 <script src="scripts/mainTreeEditor.js"></script>
 <script>
     // localVariablesSessionStorage()
-    height = 600
+    height = 550
     colorsUsed= parseSessionStorage("colorsUsed")
     // ************** Event listener for file input *****************
     const inputFileDiv = document.getElementById("file-selector-1")

@@ -69,7 +69,7 @@ a {
 }
 
 .control-panel{
-    background-color: #15616D;
+    background-color: #ffffff;
     color: white;
 }
 
@@ -92,9 +92,62 @@ footer {
     bottom: 0vh;
     width: 100vw;
     color: white;
-    background-color: #15616D;
+    background-color: #008080;
     margin: none;
+    height: 30px;
     /* padding-right: 10px; */
     z-index:10;
-    border: 1px solid black;
+
+}
+.row {
+    width: 100%;
+}
+
+.state{
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+.small-box {
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+    display: block;
+    margin-bottom: 20px;
+    margin-left: 15px;
+    margin-right: 15px;
+    position: relative;
+    width: 100%;
+}
+
+.small-box > .inner {
+    padding: 10px;
+}
+
+.small-box h3 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    padding: 0;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.small-box p {
+    text-align: center;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.bg-color-one {
+    background-color: #85C1E9  !important;
+}
+
+.bg-color-two {
+    background-color: #82E0AA !important;
+}
+.bg-color-three {
+    background-color: #F8C471 !important;
+}
+.bg-color-four {
+    background-color: #F1948A !important;
 }
