@@ -111,12 +111,13 @@
     var storedTrees = parseSessionStorage("trees")
     var storedRightClickNode = parseSessionStorage("rightClickNode")
     instantiateSVG(false)
-    if (storedTrees == undefined || storedTrees == {}){
+    var newExpert = true
+    if (storedTrees == undefined || Object.keys(storedTrees).length ==0 || storedRightClickNode==undefined){
+        addExpert = true
         drawTree()
     } else {
+        var newExpert = false
         expertTree = storedTrees[storedRightClickNode["id"]]
-        console.log(nodeGap)
-        console.log(expertTree)
         setLabelShowns(expertTree)
         resetNodesWithNewPositions(expertTree)
         redoSVG(expertTree)
@@ -124,7 +125,29 @@
 
     function saveExpert(){
         trees = storedTrees
-        storedTrees[storedRightClickNode["id"]] = expertTree
+        if (addExpert == true){
+            var metaController = parseSessionStorage("mainTree")
+            expertTree = mainTree 
+            var treeID = undefined
+            try {treeID= getNextTreeID()}
+            catch{treeID= 1}
+            console.log("Next TREE ID: " + treeID)
+            expertTree["expertID"] = treeID
+            expertTree["color"] = colorGenerator()
+            expertTree["nodes"] = applyColorToNodes(expertTree["nodes"], expertTree["color"])
+            storedTrees[treeID] = expertTree
+            addExpert = true
+            var description = prompt("Describe your expert")
+            expertTree["description"] = description
+            console.log(Object.keys(trees) + treeID)
+            window.location.href="meta_controller.html"
+
+        } else{
+            trees = storedTrees
+            storedTrees[storedRightClickNode["id"]] = expertTree
+            rightClickNode = storedRightClickNode
+            addExpert = true
+        }
         setSessionStorage()
     }
 </script>

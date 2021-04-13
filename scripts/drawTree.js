@@ -124,7 +124,7 @@ function drawTree(tree = mainTree) {
 
         // Access nodes
         var node = svg.selectAll("g.node")
-            .data(visibleNodes, function(d){return d.id;});
+            .data(visibleNodes, function (d) { return d.id; });
 
         //Access the existing nodes
         var nodeEnter = node.enter()
@@ -158,15 +158,16 @@ function drawTree(tree = mainTree) {
             .on("contextmenu", function (d, i) {
                 d3.event.preventDefault();
                 handleRightClick(d, i);
+                redoSVG()
             });
 
         nodeEnter.append("text")
             .attr("text-anchor", "middle")
             .style("fill-opacity", 1)
             .text(function (d) {
-                if (nodes[d["id"]]["show_label"] == undefined || nodes[d["id"]]["show_label"] == false){
+                if (nodes[d["id"]]["show_label"] == undefined || nodes[d["id"]]["show_label"] == false) {
                     return ""
-                } else{
+                } else {
                     return d["label"]
                 }
             })
@@ -174,13 +175,13 @@ function drawTree(tree = mainTree) {
                 var parent = getParent(d["id"], tree)
                 var j = 0
                 if (parent != null) {
-                    if (d["id"] != edges[parent][0] && d["depth"]>5) {
+                    if (d["id"] != edges[parent][0] && d["depth"] > 5) {
                         j = .65
                     }
                 }
                 return (.65 + j) + "em"
             })
-            .on("click", function (d) {handleLabelClick(d, this)})
+            .on("click", function (d) { handleLabelClick(d, this) })
             .on("mouseover", handleLabelMouseOver)
             .on("mouseout", handleLabelMouseOut)
 
@@ -275,6 +276,15 @@ function drawTree(tree = mainTree) {
     }
 
     function handleRightClick(d, i) {
+        if (parseSessionStorage("addExpert") == true) {
+            var yes = confirm("Do you want to add to this node?")
+            if (yes == true) {
+                addLeaf(e, d.id, mainTree, parseSessionStorage("expertTree")["color"])
+                sessionStorage["addExpert"] = false
+                return
+            }
+        }
+
         rightClickNode = d
         var menu = document.getElementById("tree-right-click-menu")
         menu.style.left = d3.event.pageX + "px"
@@ -306,7 +316,6 @@ function drawTree(tree = mainTree) {
             collapse(edges[source][1])
         }
     }
-
 
     function showChildren(source) {
         if (edges[source].length == 1) {
@@ -354,7 +363,7 @@ function drawTree(tree = mainTree) {
         input.style.height = rect.height + 'px'
         input.style.fontSize = 8 + 'px'
         input.value = d["label"]
-        input.onblur = (e)=>{e.target.remove()}
+        input.onblur = (e) => { e.target.remove() }
         input.addEventListener('keyup', (e) => changeLabel(e, element.parentNode.id.substring(5)))
         document.body.appendChild(input);
     }
@@ -446,7 +455,7 @@ function mergeTrees(nodes1, nodes2, edges1, edges2, target, head2) {
     return [nodes, edges]
 }
 
-function getParent(nodeID, tree=mainTree) {
+function getParent(nodeID, tree = mainTree) {
     for (let i in tree["edges"]) {
         if (tree["edges"][i].includes(nodeID)) {
             return i
@@ -456,7 +465,7 @@ function getParent(nodeID, tree=mainTree) {
 }
 
 // ************** Toggle/Set Functions *****************
-function toggleLabel(nodeID, tree=mainTree) {
+function toggleLabel(nodeID, tree = mainTree) {
     if (tree["nodes"][nodeID]["show_label"] == undefined || tree["nodes"][nodeID]["show_label"] == false) {
         tree["nodes"][nodeID]["show_label"] = true;
     } else {
@@ -477,14 +486,13 @@ function convertLeafLabelAction(tree = mainTree) {
 }
 
 // ************** Instantiating Functions *****************
-function setLabelShowns(tree = mainTree){
+function setLabelShowns(tree = mainTree) {
     var maxDepth = getMaxDepth(tree)
-    var labelLimit = 3/4
+    var labelLimit = 3 / 4
     for (var node in tree["nodes"]) {
-        if (tree["nodes"][node]["depth"] > maxDepth*labelLimit-1) {
+        if (tree["nodes"][node]["depth"] > maxDepth * labelLimit - 1) {
             tree["nodes"][node]["show_label"] = false
-        } else{
-            console.log("Show label")
+        } else {
             tree["nodes"][node]["show_label"] = true
         }
     }
@@ -521,15 +529,14 @@ function instantiateSVG(legend = true) {
     }
 }
 // ************** Reset Functions *****************
-function resetNodes(tree=mainTree) {
+function resetNodes(tree = mainTree) {
     var svg = d3.select("svg")
     var node = svg.selectAll("g.node").remove()
     drawTree(tree)
 }
 
-function resetNodesWithNewPositions(tree=mainTree) {
+function resetNodesWithNewPositions(tree = mainTree) {
     autosizeSVGWidthHeight(tree)
-    console.log(nodeGap)
     var [n, e] = getNodePositions(tree["nodes"], tree["edges"], tree["head"], width / 2, 25, -1, false, getMaxDepth(tree))
     tree["nodes"] = n
     tree["edges"] = e
@@ -539,7 +546,7 @@ function resetNodesWithNewPositions(tree=mainTree) {
     drawTree(tree)
 }
 
-function redoSVG(tree=mainTree) {
+function redoSVG(tree = mainTree) {
     var oldWidth = width
     var svg = d3.select("svg").remove()
     autosizeSVGWidthHeight(tree)
@@ -547,8 +554,14 @@ function redoSVG(tree=mainTree) {
         tree["nodes"][nodeID]["x"] += width / 2 - oldWidth / 2
     }
     instantiateSVG()
-    if (tree == mainTree){
-    drawLegend()
+    if (tree == mainTree) {
+        drawLegend()
     }
     drawTree(tree)
+}
+
+function expandAll(tree = mainTree) {
+    for (var i in mainTree["nodes"]) {
+        mainTree["nodes"][i]["shown"] = true
+    }
 }

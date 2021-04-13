@@ -1,4 +1,7 @@
 function getNextTreeID(){
+    if (Object.keys(trees).length == 0){
+        return 1
+    }
     var maxID = Math.max(...Object.keys(trees))
     return maxID + 1
 }

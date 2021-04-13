@@ -68,9 +68,9 @@ function addParent(e, tree = mainTree) {
     setDisplayNoneContextMenu()
 }
 
-function addLeaf(e, nodeID=rightClickNode,tree=mainTree, nodeColor = "#999999", expertID = undefined) {
-    if (nodeID.id != undefined){
-        nodeID=nodeID.id
+function addLeaf(e, nodeID = rightClickNode, tree = mainTree, nodeColor = "#999999", expertID = undefined) {
+    if (nodeID.id != undefined) {
+        nodeID = nodeID.id
     }
     if (tree["edges"][nodeID].length == 2) {
         alert("Leaves full")
@@ -86,7 +86,7 @@ function addLeaf(e, nodeID=rightClickNode,tree=mainTree, nodeColor = "#999999", 
             "y": 25,
             "color": nodeColor,
             "shown": true,
-            "expertID": expertID        
+            "expertID": expertID
         }
         tree["edges"][nodeID].push(newID)
         resetNodesWithNewPositions()
@@ -94,7 +94,7 @@ function addLeaf(e, nodeID=rightClickNode,tree=mainTree, nodeColor = "#999999", 
     setDisplayNoneContextMenu()
 }
 
-function deleteNode(nodeID, tree=mainTree) {
+function deleteNode(nodeID, tree = mainTree) {
     //Do not delete head 
     if (nodeID == tree["head"]) { //&& tree["edges"][tree["head"]].length==0
         alert("Sorry, cannot delete the root")
@@ -121,7 +121,7 @@ function deleteRecursive(nodeID, tree = mainTree) {
     delete tree["nodes"][nodeID]
 }
 
-function makeExpert(nodeID){
+function makeExpert(nodeID) {
     setSessionStorage()
     window.location.href = "expert_creator.html"
 }
@@ -149,6 +149,6 @@ function graphToHierarchyWithPositions(nodes, edges, head, parentX, parentY, lef
     return result
 }
 
-function getPartialTree(source, tree=mainTree){
+function getPartialTree(source, tree = mainTree) {
 
 }

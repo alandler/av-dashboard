@@ -1,18 +1,18 @@
-function headCentered(tree = mainTree){
-    if (tree["edges"][tree["head"]].length == 1){
+function headCentered(tree = mainTree) {
+    if (tree["edges"][tree["head"]].length == 1) {
         return true
-    } else{
+    } else {
         return false
     }
 }
 
-function getNodesAtDepths(tree = mainTree){
+function getNodesAtDepths(tree = mainTree) {
     var depths = {}
     var maxDepth = getMaxDepth(tree)
-    for (var i = 0; i<=maxDepth; i++){
+    for (var i = 0; i <= maxDepth; i++) {
         depths[i] = []
     }
-    for (var nodeID in tree["nodes"]){
+    for (var nodeID in tree["nodes"]) {
         depths[tree["nodes"][nodeID]["depth"]].push(nodeID)
     }
     return depths
@@ -20,30 +20,25 @@ function getNodesAtDepths(tree = mainTree){
 
 function autosizeSVGWidthHeight(tree = mainTree) {
     var maxDepth = getMaxDepth(tree)
-    console.log("Autosize Max depth: " + maxDepth)
-    if (headCentered() == true){
+    if (headCentered() == true) {
         maxDepth -= 1
     }
     var numNodes = Math.pow(2, maxDepth)
     // var numGaps = numNodes / 2 - 1
     var maxWidth = nodeGap * (numNodes) * 2
-    console.log("Max width: " + maxWidth)
     var maxHeight = 100 * maxDepth
-    console.log("Max maxHeight: " + maxHeight)
 
     if (maxWidth > width) { //If bounds are exceeded, try reducing the gap, then expand svg
-        var extraWidth = maxWidth-width
-        var extraPerNode = extraWidth/numNodes
-        if (nodeGap-extraPerNode>6){
-            nodeGap = nodeGap-extraPerNode
+        var extraWidth = maxWidth - width
+        var extraPerNode = extraWidth / numNodes
+        if (nodeGap - extraPerNode > 6) {
+            nodeGap = nodeGap - extraPerNode
         } else {
             nodeGap = 7
         }
         width = nodeGap * (numNodes) * 2
-        console.log("Width:" + width + " and nodeGap: " + nodeGap)
     } else { // If the nodes fit, optimize for space
-        var perNode = width/numNodes/2
-        console.log("Extra per node:" + perNode)
+        var perNode = width / numNodes / 2
         nodeGap = Math.min(perNode, 50)
     }
     if (maxHeight > height) {
@@ -71,31 +66,31 @@ function getMaxDepth(tree = mainTree) {
     return maxDepth
 }
 
-function checkNodePositionsWithinSVGBounds(tree = mainTree){
-    for (var nodeID in tree["nodes"]){
-        if (tree["nodes"][nodeID]<=0 || tree["nodes"][nodeID]>=width){
+function checkNodePositionsWithinSVGBounds(tree = mainTree) {
+    for (var nodeID in tree["nodes"]) {
+        if (tree["nodes"][nodeID] <= 0 || tree["nodes"][nodeID] >= width) {
             return true
         }
     }
     return false
 }
 
-function reassignPositions(tree){
+function reassignPositions(tree) {
     var [newN, newE] = getNodePositions(tree["nodes"], tree["edges"], tree["head"], width / 2, 25, -1, false, getMaxDepth(tree))
     tree["nodes"] = newN
 }
 
-function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left, maxDepth, straight=false){
+function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, left, maxDepth, straight = false) {
     var xShift = 0;
     if (parentDepth == -1) {
         nodes[source]['x'] = parentX
         nodes[source]['y'] = parentY
     }
     else {
-        xShift = Math.pow(2,(maxDepth-parentDepth-1))*nodeGap
+        xShift = Math.pow(2, (maxDepth - parentDepth - 1)) * nodeGap
         // console.log("Xshift: " + xShift)
         nodes[source]['x'] = left ? parentX - xShift : parentX + xShift
-        nodes[source]['x'] = straight? parentX: nodes[source]['x'] 
+        nodes[source]['x'] = straight ? parentX : nodes[source]['x']
         nodes[source]['y'] = parentY + 100
     }
     nodes[source]["depth"] = parentDepth + 1
@@ -107,7 +102,7 @@ function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, l
         [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true, maxDepth, true)
     } else {
         [nodes, edges] = getNodePositions(nodes, edges, edges[source][0], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], true, maxDepth)
-        [nodes, edges] = getNodePositions(nodes, edges, edges[source][1], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], false,maxDepth)
+        [nodes, edges] = getNodePositions(nodes, edges, edges[source][1], nodes[source]['x'], nodes[source]['y'], nodes[source]["depth"], false, maxDepth)
     }
     return [nodes, edges]
 }
@@ -135,11 +130,11 @@ function getNodePositionsOverlap(nodes, edges, source, parentX, parentY, parentD
     return [nodes, edges]
 }
 
-function setFields(tree){
-    [tree["nodes"], tree["edges"]] = setField(tree["nodes"], tree['edges'], tree['head'], width/2, 0, -1, false)
+function setFields(tree) {
+    [tree["nodes"], tree["edges"]] = setField(tree["nodes"], tree['edges'], tree['head'], width / 2, 0, -1, false)
 }
 
-function setField(nodes, edges, source, parentX, parentY, parentDepth, left){
+function setField(nodes, edges, source, parentX, parentY, parentDepth, left) {
     if (parentDepth == -1) {
         nodes[source]['x'] = parentX
         nodes[source]['y'] = parentY

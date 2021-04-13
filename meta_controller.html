@@ -20,7 +20,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#"><img width = "30px" height="20px" src="images/DTLight_2.svg"></img></a>
+        <a class="navbar-brand" href="#"><img width="30px" height="20px" src="images/DTLight_2.svg"></img></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -28,8 +28,10 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-item nav-link" href="index.html">Map</a>
-                <a class="nav-item nav-link active" href="meta_controller.html">Meta Controller <span class="sr-only">(current)</span></a>
-                <a class="nav-item nav-link" href="expert_creator.html">Build an Expert</a>
+                <a class="nav-item nav-link active" href="meta_controller.html">Meta Controller <span
+                        class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" onclick="setSessionStorage()" href="expert_creator.html">Build an
+                    Expert</a>
                 <a class="nav-item nav-link" href="logs.html">Logs</a>
                 <a class="nav-item nav-link" href="help.html">Help</a>
             </div>
@@ -47,7 +49,7 @@
             tree, click a
             filled-in node. Right click on the parent node to add a new root or child node in order to generate the meta
             controller. </p>
-            <!-- <button onclick="showStateImage()"></button> -->
+        <!-- <button onclick="showStateImage()"></button> -->
     </div>
 
     <div class="container-fluid">
@@ -68,7 +70,7 @@
                 <div class="row">
                     <div class="col">
                         <b>State space diagram</b>
-                        <img width = "95%" src="images/states.png"/>
+                        <img width="95%" src="images/states.png" />
                     </div>
                 </div>
             </div>
@@ -126,17 +128,37 @@
     // ************** Event listener for file input *****************
     const inputFileDiv = document.getElementById("file-selector-1")
     inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], getNextTreeID())) //e.target.id.substring(14)
-    var lastID = Object.keys(trees) == undefined ? 1: Math.max(Object.keys(trees))
+    var lastID = Object.keys(trees) == undefined ? 1 : Math.max(Object.keys(trees))
 
 
     // ************** Hard code meta controller *****************
-    if (mainTree["nodes"][0]["label"] == "Root node" && mainTree["edges"][0].length == 0){
+    if (parseSessionStorage("mainTree") != undefined) {
+        mainTree = parseSessionStorage("mainTree")
+    }
+    if (mainTree["nodes"][0]["label"] == "Root node" && mainTree["edges"][0].length == 0) {
         hardCodeMetaController()
+    }
+    console.log("Legend?")
+    console.log(trees)
+    if (parseSessionStorage("trees") && Object.keys(parseSessionStorage("trees")).length != 0) {
+        trees = {
+            ...trees,
+            ...parseSessionStorage("trees")
+        };
+    }
+    console.log(trees)
+
+    // ************** If right click node is undefined, select appropriate node *****************
+    addExpert = parseSessionStorage("addExpert") == true
+    if (addExpert) {
+        expandAll()
+        alert("To select a node, right click it. If you want to add nodes before adding the expert, press cancel, and the normal menu will appear.")
     }
 
     instantiateSVG()
     drawLegend()
     drawTree()
+    // setSessionStorage()
 </script>
 
 <script src="scripts/tests.js"></script>
