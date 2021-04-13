@@ -377,16 +377,19 @@ function drawTree(tree = mainTree) {
     }
 
     function changeLabel(e, field) {
-
         if (!e) { var e = window.event; }
         e.preventDefault();
 
         // Enter is released
         if (e.keyCode == 13) {
             // var newString = mainTree["nodes"][field]["label"].replace(d, e.target.value)
-            mainTree["nodes"][field]["label"] = e.target.value
+            console.log("e.target")
+            console.log(e.target)
+            console.log(field)
+
+            tree["nodes"][field]["label"] = e.target.value
             e.target.remove()
-            resetNodes()
+            resetNodes(tree)
         };
     }
 }
