@@ -69,24 +69,32 @@ function parseDot(text) {
 }
 
 function hardCodeMetaController(){
-    var policy = [dt_policy_4, dt_policy_8]
-    for (var i = 1; i<3; i++){
+    var policy = [dt_policy_4, dt_policy_4,dt_policy_4]
+    for (var i = 1; i<4; i++){
         var [newNodes, newEdges, newHead] = parseDot(policy[i-1])
         trees[i] = {"nodes": newNodes, "edges": newEdges, "head": newHead}
-        trees[i]["description"] = i==1? "Expert depth 4":"Expert depth 8"
+        trees[i]["description"] = i==1? "Emergency expert":"Main expert"
+        trees[i]["description"] = i==3? "8am expert":trees[i]["description"]
         trees[i]["color"] = colorGenerator()
         setFields(trees[i])
         console.log(trees)
         applyColorToNodes(trees[i]["nodes"], trees[i]["color"])
+        console.log("trees:")
+        console.log(trees)
     }
     mainTree = {
         "nodes": { 0: { "id": 0, "label": "if emergency vehicle, right, else left", "x": width / 2, "y": 25, 
                 "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined},
-                    1: { "id": 1, "label": "Main policy", "x": width / 2-65, "y": 75, 
+                    1: { "id": 1, "label": "if 8am, right, else left", "x": width / 2-130, "y": 75, 
+                "color": "#999999", "shown": true, "depth": 1, "show_label": true, "expertID": undefined},
+                    2: { "id": 2, "label": "Emergency vehicle policy", "x": width / 2+130, "y": 75, 
                 "color": trees[1]["color"], "shown": true, "depth": 1, "show_label": true, "expertID": 1},
-                    2: { "id": 2, "label": "Emergency vehicle policy", "x": width / 2+65, "y": 75, 
-                "color": trees[2]["color"], "shown": true, "depth": 1, "show_label": true, "expertID": 2} },
-        "edges": { 0: [1,2], 1:[], 2:[] },
+                3: { "id": 3, "label": "Main policy", "x": width / 2-130-65, "y": 125, 
+                "color": trees[2]["color"], "shown": true, "depth": 2, "show_label": true, "expertID": 2},
+                4: { "id": 4, "label": "8am policy", "x": width / 2-130+65, "y": 125, 
+                "color": trees[3]["color"], "shown": true, "depth": 2, "show_label": true, "expertID": 3},
+            },
+        "edges": { 0: [1,2], 1:[3,4], 2:[], 3:[], 4:[] },
         "head": 0,
     }
     console.log(trees)

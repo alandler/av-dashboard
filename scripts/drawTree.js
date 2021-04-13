@@ -496,6 +496,7 @@ function setLabelShowns(tree = mainTree) {
         } else {
             tree["nodes"][node]["show_label"] = true
         }
+        tree["nodes"][node]["show_label"] = true //Hard code
     }
 }
 

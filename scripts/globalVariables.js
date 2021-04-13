@@ -4,7 +4,7 @@ rightClickNode = undefined
 
 margin = { top: 200, right: 10, bottom: 10, left: 20 },
     width = 1065 - margin.right - margin.left,
-    height = 1000 - margin.top - margin.bottom;
+    height = 800 - margin.top - margin.bottom;
 
 mainTree = {
     "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined } },
