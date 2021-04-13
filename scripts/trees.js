@@ -1,5 +1,3 @@
-trees = {}
-
 function getNextTreeID(){
     var maxID = Math.max(...Object.keys(trees))
     return maxID + 1

@@ -1,23 +1,3 @@
-rightClickNode = undefined
-
-margin = { top: 200, right: 10, bottom: 10, left: 20 },
-    width = 1020 - margin.right - margin.left,
-    height = 2000 - margin.top - margin.bottom;
-
-mainTree = {
-    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined} },
-    "edges": { 0: [] },
-    "head": 0
-}
-
-expertTree = {
-    "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined} },
-    "edges": { 0: [] },
-    "head": 0
-}
-
-nodeGap = 10
-
 function getLeaves(tree = mainTree) {
     var leaves = []
     for (let node in tree["nodes"]) {
@@ -72,11 +52,13 @@ function nearestNode(x, y) {
 }
 
 function drawLegend() {
+    console.log("Draw legend")
     d3.selectAll("g.legend").remove()
     var data = []
     for (var key in trees) {
         data.push({ "id": key, "x": 10, "y": key * 30, "color": trees[key]["color"], "description": trees[key]["description"] })
     }
+    console.log(data)
     var svg = d3.select("svg")
     var legend = svg.selectAll("g.rect")
         .remove()
@@ -125,9 +107,10 @@ function drawTree(tree = mainTree) {
     var diagonal = d3.svg.diagonal()
         .projection(function (d) { return [d.x, d.y]; });
 
-    Object.values(nodes).map(n => {
-        if (n.depth > 1) { n.shown = false }
-    })
+    //Only do this if it's the first upload
+    // Object.values(nodes).map(n => {
+    //     if (n.depth > 1) { n.shown = false }
+    // })
 
     update(head)
 
@@ -135,33 +118,17 @@ function drawTree(tree = mainTree) {
         var nodes = tree["nodes"]
         var edges = tree["edges"]
         var head = tree["head"]
-        // console.log("Nodes upon enter update:")
-        // console.log(nodes)
-        // visibleNodes = Object.values(nodes)
-        // visibleNodes = visibleNodes.filter(obj => obj.shown != 0)
-        // console.log(visibleNodes)
 
-        //Move new nodes to the end of the list
-        console.log("Child")
-        console.log(getChildren(source))
-        childrenIDS = getChildren(source).map(x => x.id)
-        visibleNodes = Object.values(nodes).filter(obj => (obj.shown != 0 && !(childrenIDS.includes(obj.id))))
-        for (var childID of childrenIDS) {
-            if (nodes[childID].shown) {
-                visibleNodes.push(nodes[childID])
-            }
-        }
+        //Only visible nodes
+        console.log("Visible")
+        console.log(nodes)
+        var nodeList = Object.values(nodes)
+        visibleNodes = nodeList.filter(obj => (obj.shown != 0))
 
 
         // Access nodes
         var node = svg.selectAll("g.node")
-            .data(visibleNodes
-                // , 
-                // function (d) {
-                // console.log("g.node")
-                // console.log(d)
-                // return d.id || (d.id = ++i);}
-            );
+            .data(visibleNodes, function(d){return d.id;});
 
         //Access the existing nodes
         var nodeEnter = node.enter()
@@ -177,7 +144,7 @@ function drawTree(tree = mainTree) {
 
         //Add a circle for collapse purposes
         nodeEnter.append("circle")
-            .attr("cy", -13)
+            .attr("cy", -8)
             .attr("r", 5)
             .attr("fill", d => {
                 if (edges[d["id"]].length == 0 || edges[d["id"]][0] == undefined) {
@@ -217,9 +184,9 @@ function drawTree(tree = mainTree) {
                         j = .65
                     }
                 }
-                return (.05 + j) + "em"
+                return (.65 + j) + "em"
             })
-            .on("click", handleLabelClick)
+            .on("click", function (d) {handleLabelClick(d, this)})
             .on("mouseover", handleLabelMouseOver)
             .on("mouseout", handleLabelMouseOut)
 
@@ -257,6 +224,7 @@ function drawTree(tree = mainTree) {
         var nodeExit = node.exit().transition()
             .duration(duration)
             .attr("transform", function (d) {
+                console.log(d)
                 return "translate(" + nodes[source].x + "," + nodes[source].y + ")";
             })
             .remove();
@@ -297,6 +265,8 @@ function drawTree(tree = mainTree) {
     }
 
     function toggleCollapse(d) {
+        console.log("toggle collpase")
+        console.log(visibleNodes)
         let children = getChildren(d.id)
         // console.log("Children of " + d.id)
         // console.log(children)
@@ -304,7 +274,9 @@ function drawTree(tree = mainTree) {
             return
         } else if (children[0].shown) {
             collapse(d.id)
+            shiftVisibleNodes()
             nodes[d.id].shown = true
+            // redoSVG()
         } else {
             showChildren(d.id)
         }
@@ -346,17 +318,13 @@ function drawTree(tree = mainTree) {
         }
     }
 
+
     function showChildren(source) {
         if (edges[source].length == 1) {
             nodes[edges[source][0]]['shown'] = true
         } else {
             nodes[edges[source][0]]['shown'] = true
             nodes[edges[source][1]]['shown'] = true
-
-            // console.log("Shown:")
-            // console.log(edges[source])
-            // console.log(nodes[edges[source][0]])
-            // console.log(nodes[edges[source][1]])
         }
     }
 
@@ -373,7 +341,7 @@ function drawTree(tree = mainTree) {
         return links
     }
 
-    function handleLabelClick(d, field) {
+    function handleLabelClick(d, element) {
         //Remove previous input boxes
         let toRemove = document.getElementsByClassName("overlayText")[0]
         if (toRemove != undefined) {
@@ -381,7 +349,7 @@ function drawTree(tree = mainTree) {
         }
 
         //Get coordinates
-        var rect = this.getBoundingClientRect()
+        var rect = element.getBoundingClientRect()
         var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
         var y = rect.y + scrollTop
 
@@ -396,8 +364,9 @@ function drawTree(tree = mainTree) {
         input.style.width = rect.width + 'px'
         input.style.height = rect.height + 'px'
         input.style.fontSize = 8 + 'px'
-        input.value = d
-        input.addEventListener('keyup', (e) => changeLabel(e, d, this.parentNode.parentNode.id.substring(5)))
+        input.value = d["label"]
+        input.onblur = (e)=>{e.target.remove()}
+        input.addEventListener('keyup', (e) => changeLabel(e, element.parentNode.id.substring(5)))
         document.body.appendChild(input);
     }
 
@@ -409,15 +378,15 @@ function drawTree(tree = mainTree) {
         d3.select(this).style('fill', 'black');
     }
 
-    function changeLabel(e, d, field) {
+    function changeLabel(e, field) {
 
         if (!e) { var e = window.event; }
         e.preventDefault();
 
         // Enter is released
         if (e.keyCode == 13) {
-            var newString = mainTree["nodes"][field]["label"].replace(d, e.target.value)
-            mainTree["nodes"][field]["label"] = newString
+            // var newString = mainTree["nodes"][field]["label"].replace(d, e.target.value)
+            mainTree["nodes"][field]["label"] = e.target.value
             e.target.remove()
             resetNodes()
         };

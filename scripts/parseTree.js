@@ -59,3 +59,28 @@ function parseDot(text) {
     head = getHeadLabel(edges)
     return [nodes, edges, head]
 }
+
+function hardCodeMetaController(){
+    var policy = [dt_policy_4, dt_policy_8]
+    for (var i = 1; i<3; i++){
+        var [nodes, edges, head] = parseDot(policy[i-1])
+        trees[i] = {"nodes": nodes, "edges": edges, "head": head}
+        trees[i]["description"] = i==1? "Expert depth 4":"Expert depth 8"
+        trees[i]["color"] = colorGenerator()
+        applyColorToNodes(trees[i]["nodes"], trees[i]["color"])
+        console.log("Hard coded trees")
+        console.log(trees)
+    }
+    mainTree = {
+        "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, 
+                "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined},
+                    1: { "id": 1, "label": "Context 1?", "x": width / 2-65, "y": 75, 
+                "color": trees[1]["color"], "shown": true, "depth": 1, "show_label": true, "expertID": 1},
+                    2: { "id": 2, "label": "Context 2?", "x": width / 2+65, "y": 75, 
+                "color": trees[2]["color"], "shown": true, "depth": 1, "show_label": true, "expertID": 2} },
+        "edges": { 0: [1,2], 1:[], 2:[] },
+        "head": 0,
+    }
+    resetNodesWithNewPositions()
+
+}

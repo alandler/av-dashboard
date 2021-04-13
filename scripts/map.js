@@ -26,7 +26,7 @@ for (let position of markers){
     console.log("Position: " + position)
     var marker = L.marker([position[0], position[1]]).addTo(mymap).on('click', function(e) {
         console.log(e.latlng)
-        window.location = "index.html";
+        window.location = "meta_controller.html";
         // window.open("index.html");
     });;
     

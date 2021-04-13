@@ -12,42 +12,77 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script> 
+
     <!-- CSS-->
     <link href="styles/base.css" rel="stylesheet">
     <link href="styles/tree.css" rel="stylesheet">
     <link href="styles/table.css" rel="stylesheet">
+    <link href="styles/map.css" rel="stylesheet">
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#"><img width = "30px" height="20px" src="images/DTLight_2.svg"></img></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active " href="index.html">Map</a>
+                <a class="nav-item nav-link" href="meta_controller.html">Meta Controller</span></a>
+                <a class="nav-item nav-link" href="expert_creator.html">Build an Expert</a>
+                <a class="nav-item nav-link" href="logs.html">Logs</a>
+                <a class="nav-item nav-link" href="help.html">Help</a>
+            </div>
+        </div>
+    </nav>
 
     <div id="heading">
         <h1>
-            Welcome!
+            DTLight: Map
         </h1>
-        <p>Enter your name to view the dashboard</p>
+        <b id="instructions">Instructions</b>
+        <p>Click on an intersection to view the traffic light </p>
     </div>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <img width="100px" height="100px" src="images/DTLight_2.svg"></img> 
-                <form onsubmit="login()">
-                <input style = "color: black" id = "name" type = "text" value = "Name">
-                <button style = "color: black" type = "submit">Submit</button>
-            </form>
+                <div id="mapid"></div>
             </div>
         </div>
     </div>
+
+
 </body>
+
+<script src="scripts/require.js"></script>
+<script src="scripts/globalVariables.js"></script>
+<script src="scripts/parseTree.js"></script>
+<script src="scripts/drawTree.js"></script>
+<script src="scripts/helper.js"></script>
+<script src="scripts/trees.js"></script>
+<script src="scripts/mainTreeEditor.js"></script>
+<script src="scripts/writeDot.js"></script>
+<script src="scripts/map.js"></script>
 <script>
-    function login(){
-        // console.log("Submiot")
-        var name = document.getElementById("name").value
-        // console.log("name: " + name)
-        // document.cookie = "username=" + name
-        // console.log(document.cookie)
-        // window.location = "meta_controller.html";
-        window.open("meta_controller.html")
-    }
+    // ************** Set new margin for map element *****************
+    margin = { top: 10, right: 10, bottom: 10, left: 10 },
+    width = 1020 - margin.right - margin.left,
+    height = 2000 - margin.top - margin.bottom;
+
+    // ************** Initialize cookie *****************
+    setCookie()
 </script>
+
+<script src="scripts/tests.js"></script>
+
 </html>
