@@ -43,6 +43,7 @@
         <b id="instructions">Instructions</b>
         <p>Right click on the parent node to add a new root or child node in order to generate the meta
             controller. </p>
+            <button onclick="clearRightClickNode()">Reset Expert View</button>
     </div>
 
     <div class="container-fluid">
@@ -149,6 +150,12 @@
             addExpert = true
         }
         setSessionStorage()
+    }
+
+    function clearRightClickNode(){
+        sessionStorage["rightClickNode"] = undefined
+        Object.assign(expertTree,mainTree)
+        redoSVG(expertTree)
     }
 </script>
 

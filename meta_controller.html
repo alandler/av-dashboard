@@ -75,6 +75,15 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-6">
+                <img width = "100%" src = "images/satellite_view.png">
+            </div>
+            <div class="col-6">
+                <img width = "100%" src = "images/street_view.png">
+            </div>
+            
+        </div>
     </div>
 
     <nav class="context-menu" id="tree-right-click-menu">
@@ -125,6 +134,7 @@
 <script src="scripts/trees.js"></script>
 <script src="scripts/mainTreeEditor.js"></script>
 <script>
+    height = 600
     // ************** Event listener for file input *****************
     const inputFileDiv = document.getElementById("file-selector-1")
     inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], getNextTreeID())) //e.target.id.substring(14)
@@ -138,19 +148,17 @@
     if (mainTree["nodes"][0]["label"] == "Root node" && mainTree["edges"][0].length == 0) {
         hardCodeMetaController()
     }
-    console.log("Legend?")
-    console.log(trees)
     if (parseSessionStorage("trees") && Object.keys(parseSessionStorage("trees")).length != 0) {
         trees = {
             ...trees,
             ...parseSessionStorage("trees")
         };
     }
-    console.log(trees)
+    rightClickNode = parseSessionStorage("rightClickNode")
 
     // ************** If right click node is undefined, select appropriate node *****************
-    addExpert = parseSessionStorage("addExpert") == true
-    if (addExpert) {
+    addExpert = parseSessionStorage("addExpert")
+    if (addExpert== true) {
         expandAll()
         alert("To select a node, right click it. If you want to add nodes before adding the expert, press cancel, and the normal menu will appear.")
     }
