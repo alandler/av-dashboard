@@ -42,7 +42,8 @@ function parseDot(text) {
             attributeList[0] = attributeList[0].substring(7, attributeList[0].length)
             // convert <= to present or not
             var cellData = attributeList[0].split(" ")
-            if (cellData[2]=="<=" && cellData[3]==".5"){
+            console.log("Cell data:" +cellData)
+            if (cellData[2]=="<=" && cellData[3]=="0.5"){
                 s = "Cell " + cellData[1] + ": present"
             } else if (cellData[2]==">=" && cellData[3]==".5"){
                 s = "Cell " + cellData[1] + ": no vehicle"
@@ -79,11 +80,11 @@ function hardCodeMetaController(){
         applyColorToNodes(trees[i]["nodes"], trees[i]["color"])
     }
     mainTree = {
-        "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, 
+        "nodes": { 0: { "id": 0, "label": "if emergency vehicle, right, else left", "x": width / 2, "y": 25, 
                 "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined},
-                    1: { "id": 1, "label": "Context 1?", "x": width / 2-65, "y": 75, 
+                    1: { "id": 1, "label": "Main policy", "x": width / 2-65, "y": 75, 
                 "color": trees[1]["color"], "shown": true, "depth": 1, "show_label": true, "expertID": 1},
-                    2: { "id": 2, "label": "Context 2?", "x": width / 2+65, "y": 75, 
+                    2: { "id": 2, "label": "Emergency vehicle policy", "x": width / 2+65, "y": 75, 
                 "color": trees[2]["color"], "shown": true, "depth": 1, "show_label": true, "expertID": 2} },
         "edges": { 0: [1,2], 1:[], 2:[] },
         "head": 0,

@@ -23,7 +23,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 }).addTo(mymap);
 
 for (let position of markers){
-    console.log("Position: " + position)
+    // console.log("Position: " + position)
     var marker = L.marker([position[0], position[1]]).addTo(mymap).on('click', function(e) {
         console.log(e.latlng)
         window.location = "meta_controller.html";
