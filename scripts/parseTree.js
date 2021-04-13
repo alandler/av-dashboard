@@ -40,8 +40,15 @@ function parseDot(text) {
             let nodeNumber = arr[line].substring(0, space)
             let attributeList = arr[line].substring(space + 2, arr[line].length - 3).split("\\n")
             attributeList[0] = attributeList[0].substring(7, attributeList[0].length)
-            s = ""
-            s += attributeList[0]
+            // convert <= to present or not
+            var cellData = attributeList[0].split(" ")
+            if (cellData[2]=="<=" && cellData[3]==".5"){
+                s = "Cell " + cellData[1] + ": present"
+            } else if (cellData[2]==">=" && cellData[3]==".5"){
+                s = "Cell " + cellData[1] + ": no vehicle"
+            } else{
+                s = attributeList[0]
+            }
             // for (let entry of attributeList) {
             //     if (entry.includes("class")) {
             //         continue
