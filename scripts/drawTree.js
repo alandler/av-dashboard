@@ -316,7 +316,7 @@ function drawTree(tree) {
         input.style.height = rect.height + 'px'
         input.style.fontSize = 8 + 'px'
         input.value = d["label"]
-        input.onblur = (e) => { e.target.remove() }
+        // input.onblur = (e) => { e.target.remove() }
         input.addEventListener('keyup', (e) => changeLabel(e, element.parentNode.id.substring(5)))
         document.body.appendChild(input);
     }
@@ -335,6 +335,7 @@ function drawTree(tree) {
 
         // Enter is released
         if (e.keyCode == 13) {
+            console.log(e)
             tree["nodes"][field]["label"] = e.target.value
             e.target.remove()
             resetNodes(tree)

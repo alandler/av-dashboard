@@ -20,7 +20,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#"><img width = "30px" height="20px" src="images/DTLight_2.svg"></img></a>
+        <a class="navbar-brand" href="#"><img width="30px" height="20px" src="images/DTLight_2.svg"></img></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -28,7 +28,8 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-item nav-link" href="index.html">Map</a>
-                <a class="nav-item nav-link" href="meta_controller.html">Meta Controller <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="meta_controller.html">Meta Controller <span
+                        class="sr-only">(current)</span></a>
                 <a class="nav-item nav-link" href="expert_creator.html">Build an Expert</a>
                 <a class="nav-item nav-link" href="logs.html">Logs</a>
                 <a class="nav-item nav-link active" href="help.html">Help</a>
@@ -45,13 +46,31 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <img width = "700px" height="500px" src="images/states.png"/>
+                <img width="700px" height="500px" src="images/states.png" />
             </div>
+            <div class="col">
+                <b> Map Instructions</b>
+                <p>Click on an intersection to view the traffic light controller.</p>
+                <b>Meta Controller Instructions</b>
+                <p>Click on nodes to expand immediate children or collapse all children. Right click to see other
+                    actions. <br />
+                    <i>To add a new expert to the tree (After creating one in the "Build An Expert" interface): </i>
+                    drag the square in the legend and drop above the node you want to
+                    add the expert to, as a leaf.
+                </p>
+                <b>Build an Expert Instructions</b>
+                <p>Here you can edit existing experts (accessed through right clicking a node in the meta controller) or
+                    develop
+                    new experts. If you create an expert, you can export it, or save it to the meta controller.</p>
+                <p>NOTE: If you reset the expert view, you are also resetting the connection to the meta controller.</p>
+            </div>
+            <b>Instructions</b>
+            <p>Cover intersection "blind spots" here.</p>
         </div>
     </div>
 </body>
 
-<footer class = "footer">
+<footer class="footer">
     Made at Wu Lab at MIT 2021
 </footer>
 
@@ -64,8 +83,6 @@
 <script src="scripts/trees.js"></script>
 <script src="scripts/mainTreeEditor.js"></script>
 <script>
-    instantiateSVG()
-    drawTree()
 </script>
 
 <script src="scripts/tests.js"></script>
