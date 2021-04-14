@@ -25,7 +25,6 @@ function staticAutosize(tree = mainTree) {
     if (headCentered() == true) {
         maxDepth -= 1
     }
-    console.log("Max depth: " + maxDepth)
     nodeGap = Math.min(width / (2 * (Math.pow(2, maxDepth))), 55)
 }
 
@@ -111,7 +110,6 @@ function getNodePositions(nodes, edges, source, parentX, parentY, parentDepth, l
     }
     else {
         xShift = Math.pow(2, (maxDepth - parentDepth - 1)) * nodeGap
-        // console.log("Xshift: " + xShift)
         nodes[source]['x'] = left ? parentX - xShift : parentX + xShift
         nodes[source]['x'] = straight ? parentX : nodes[source]['x']
         nodes[source]['y'] = parentY + 100

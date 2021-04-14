@@ -55,8 +55,7 @@ function addParent(e, tree = mainTree) {
 }
 
 function addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID = undefined, tree = mainTree) {
-    console.log("Add leaf to node: " + nodeID)
-    console.log(trees)
+    console.log("Add a leaf at ID: " + nodeID + "... color: " + nodeColor + "... expertID: " + expertID)
     //Check if leaves are full
     if (tree["edges"][nodeID].length == 2) {
         alert("Leaves full")
@@ -80,11 +79,10 @@ function addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID 
         addExpert = false
         sessionStorage.setItem("addExpert", addExpert)
         tree["edges"][nodeID].push(newID)
-        console.log("Add leaf: push node. Tree below.")
-        console.log(tree)
         resetNodesWithNewPositions(tree)
     }
     setDisplayNoneContextMenu(tree)
+    console.log(trees)
 }
 
 function deleteNode(nodeID, tree = mainTree) {
@@ -115,43 +113,62 @@ function deleteRecursive(nodeID, tree = mainTree) {
 }
 
 function makeExpert(nodeID, tree = mainTree) {
-    console.log("Make expert")
     //If the node has an expertID, this will be a show operation. Store the relevant expert
     if (tree["nodes"][nodeID]["expertID"]) {
-        console.log(trees[tree["nodes"][nodeID]["expertID"]])
-        expertTree = trees[tree["nodes"][nodeID]["expertID"]]
-        sessionStorage.setItem("expertTree", JSON.stringify(expertTree))
+        console.log("Show experttt: " + tree["nodes"][nodeID]["expertID"])
+        var treeID = parseInt(tree["nodes"][nodeID]["expertID"])
+        console.log(trees)
+        expertTree = trees[treeID]
+        console.log(expertTree)
+        console.log(trees)
     }
     // If the node has no expertID, turn the node into an expert (save rightClickNode, make expert the node itself)
     else {
-        console.log("No expertID")
         expertTree = {}
         Object.assign(expertTree, plainTree)
 
-        //Assign node propertties to new expert
+        // Get treeID
+        var treeID = undefined
+        try {
+            treeID = getNextTreeID()
+        } catch {
+            treeID = 1
+        }
+
+        console.log("Create tree with ID" + treeID + " from node: " + rightClickNode.id)
+
+        //Assign properties to new expert node
         expertTree["nodes"][0]["label"] = rightClickNode["label"]
-        expertTree["nodes"][0]["expertID"] = getNextTreeID()
+        expertTree["nodes"][0]["expertID"] = treeID
         expertTree["nodes"][0]["color"] = colorGenerator()
+        mainTree["nodes"][rightClickNode.id]["color"]= expertTree["nodes"][0]["color"]
 
-        //Update meta controller as expert
-        mainTree["nodes"][rightClickNode.id]["expertID"] = expertTree["nodes"][0]["expertID"]
-        rightClickNode["expertID"] = expertTree["nodes"][0]["expertID"] //Should be redunant
+        //Assign expert properties
+        expertTree["description"] = rightClickNode["label"]
+        expertTree["expertID"] = treeID
+        expertTree["color"] = expertTree["nodes"][0]["color"]
+        expertTree["nodes"] = applyColorToNodes(expertTree["nodes"], expertTree["color"])
 
-        //Set cookies before leaving page
-        sessionStorage.setItem("metaController", JSON.stringify(mainTree))
-        sessionStorage.setItem("colorsUsed", JSON.stringify(colorsUsed))
-        sessionStorage.setItem("expertTree", JSON.stringify(expertTree))
-        trees[expertTree["nodes"][0]["expertID"]] = expertTree
-        sessionStorage.setItem("trees", JSON.stringify(trees))
+        //Assign the expert to the tree
+        trees[treeID] = expertTree
+        console.log("fin lk")
+        console.log(trees) 
     }
-    console.log(JSON.stringify(rightClickNode))
+    //Set cookies before leaving page
+    sessionStorage.setItem("metaController", JSON.stringify(mainTree))
+    sessionStorage.setItem("colorsUsed", JSON.stringify(colorsUsed))
+    sessionStorage.setItem("expertTree", JSON.stringify(expertTree))
+    sessionStorage.setItem("trees", JSON.stringify(trees))
+    rightClickNode = expertTree["nodes"][0] //Update right click node to include new properties
     sessionStorage.setItem("rightClickNode", JSON.stringify(rightClickNode))
+    // drawLegend()
+    // redoSVG()
+    // console.log(mainTree)
+    // console.log("Term")
     window.location.href = "expert_creator.html"
 }
 
 function toggleLabel(nodeID, tree = mainTree) {
-    console.log("Toggle Label NodeID: " + nodeID)
-    console.log(tree)
     if (!tree["nodes"][nodeID]["show_label"] || tree["nodes"][nodeID]["show_label"] == false) {
         tree["nodes"][nodeID]["show_label"] = true;
     } else {
@@ -191,8 +208,6 @@ function getNodeMaxID(nodes) {
 }
 
 function getParent(nodeID, tree = mainTree) {
-    // console.log("Get the parent of node: " + nodeID)
-    // console.log(tree)
     for (let i in tree["edges"]) {
         if (tree["edges"][i].includes(nodeID)) {
             return i

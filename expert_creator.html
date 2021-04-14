@@ -45,7 +45,7 @@
         <b id="instructions">Instructions</b>
         <p>Here you can edit existing experts (accessed through right clicking a node in the meta controller) or develop
             new experts. If you create an expert, you can export it, or save it to the meta controller.</p>
-            <p>NOTE: If you reset the expert view, you are also resetting the connection to the meta controller.</p>
+        <p>NOTE: If you reset the expert view, you are also resetting the connection to the meta controller.</p>
 
     </div>
 
@@ -116,7 +116,7 @@
 <!-- <script src="https://d3js.org/d3-dispatch.v2.min.js"></script>
 <script src="https://d3js.org/d3-selection.v2.min.js"></script> -->
 <!-- <script src="https://d3js.org/d3-drag.v2.min.js"></script> -->
-<script src="scripts/globalVariables.js"></script>
+<!-- <script src="scripts/globalVariables.js"></script> -->
 <script src="scripts/require.js"></script>
 <script src="scripts/parseTree.js"></script>
 <script src="scripts/drawTree.js"></script>
@@ -126,41 +126,52 @@
 <script src="scripts/mainTreeEditor.js"></script>
 <script src="scripts/writeDot.js"></script>
 <script>
-    margin = { top: 10, right: 10, bottom: 10, left: 10 },
-        width = 900 //- margin.right - margin.left,
-    // height = 600 - margin.top - margin.bottom;
+    margin = { top: 10, right: 10, bottom: 10, left: 20 },
+        width = 900 - margin.right - margin.left,
+        height = 600 - margin.top - margin.bottom;
+    plainTree = {
+        "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined } },
+        "edges": { 0: [] },
+        "head": 0
+    }
 
     document.getElementById("intersectionLabel").innerHTML = "Policy View: Intersection " + sessionStorage.getItem("intersectionID") + " : " + sessionStorage.getItem("intersectionName")
+    
     //Access variables
-    var colorsUsed = parseSessionStorage("colorsUsed")
-    var trees = parseSessionStorage("trees")
-    var storedRightClickNode = parseSessionStorage("rightClickNode")
+    colorsUsed = parseSessionStorage("colorsUsed")
+    trees = parseSessionStorage("trees")
+    metaControllerRightclick = parseSessionStorage("rightClickNode")
+    console.log("Right Click")
+    console.log(metaControllerRightclick)
+    console.log(trees)
+    expertTree = parseSessionStorage("expertTree")
 
-    var currentColor = "#999999"
-    var currentExpertID = undefined
+    currentColor = "#999999"
+    currentExpertID = undefined
+    addExpert = false
 
     //Create SVG
     instantiateSVG(false)
 
-    //Determine what case: modify expert, make node into expert, build expert
-    var newExpert = true
-    console.log(storedRightClickNode)
+    build()
     //Case entirely new build
-    if (!storedRightClickNode) { //No right click means new build
-        console.log("No build")
+    function build(){
+    if (!metaControllerRightclick) { //No right click means new build
+        console.log("New build")
         addExpert = true
+        expertTree = {}
         Object.assign(expertTree, plainTree) //Init plain expert tree, assign main
         mainTree = expertTree
         resetNodesWithNewPositions(mainTree)
+        console.log("New expert to build:")
+        console.log(mainTree)
         drawTree(mainTree)
     }
     //Case modification/creation
     else {
-        var newExpert = false
-        expertTree = trees[storedRightClickNode["expertID"]] //Access existing expertTree (view)
-        console.log(trees[storedRightClickNode["expertID"]])
+        console.log("Current expert to change:")
+        console.log(expertTree)
 
-        currentExpertID = storedRightClickNode["expertID"]
         currentColor = expertTree["color"]
 
         mainTree = expertTree
@@ -169,51 +180,56 @@
         resetNodesWithNewPositions(expertTree)
         redoSVG(mainTree, false)
     }
+}
 
     function saveExpert() {
         //Add the expert to the trees, with color
         if (addExpert == true) {
+            //Prompt for description
+            var description = prompt("Enter a tree descripion")
+            if (description==false){
+                return
+            }
+
             // Get treeID
-            var treeID = undefined
-            try {
-                treeID = getNextTreeID()
-            } catch {
+            var treeID = getNextTreeID()
+            if (!treeID){
                 treeID = 1
             }
-            console.log("Next TREE ID: " + treeID)
 
-            //Set new atributes
-            expertTree["expertID"] = treeID
-            expertTree["color"] = colorGenerator()
-            expertTree["nodes"] = applyColorToNodes(expertTree["nodes"], expertTree["color"])
-            trees[treeID] = expertTree
-            addExpert = true
-            var description = prompt("Describe your expert")
-            expertTree["description"] = description
+            //Creae new expert attributes (color, description)
+            mainTree["color"] = colorGenerator()
+            mainTree["nodes"] = applyColorToNodes(mainTree["nodes"], mainTree["color"])
+            mainTree["description"] = description
+            mainTree["id"] = treeID
 
-            console.log(Object.keys(trees) + treeID)
-
-            sessionStorage.setItem("trees", trees)
-            sessionStorage.setItem("expertTree", JSON.stringify(expertTree))
-
+            //Add new expert to the trees
+            trees[treeID] = mainTree
+            console.log("Add new trtee")
+            console.log(trees)
         } else {
-            trees[storedRightClickNode["id"]] = expertTree
-            sessionStorage.setItem("trees", JSON.stringify(trees))
-            sessionStorage.setItem("expertTree", JSON.stringify(mainTree))
-            addExpert = true
+            //Update expert in the trees
+            console.log("Mea right id")
+            console.log(trees)
+            console.log(metaControllerRightclick["expertID"])
+            trees[metaControllerRightclick["expertID"]] = mainTree
+            console.log(trees)
+            addExpert = false
         }
+
+        sessionStorage.setItem("colorsUsed", JSON.stringify(colorsUsed))
+        sessionStorage.setItem("trees", JSON.stringify(trees))
+        sessionStorage.setItem("expertTree", JSON.stringify(mainTree))
+        sessionStorage.setItem("addExpert", addExpert)
         window.location.href = "meta_controller.html"
     }
 
     function clearRightClickNode() {
         // sessionStorage.setItem("rightClickNode", JSON.stringify(rightClickNode))
-        rightClickNode = undefined
+        metaControllerRightclick = undefined
         sessionStorage.setItem("rightClickNode", undefined)
-        Object.assign(expertTree, plainTree)
-        mainTree = expertTree
-        var svg = d3.select("svg").remove()
-        instantiateSVG(false)
-        drawTree(mainTree)
+        addExpert=true
+        build()
     }
 </script>
 

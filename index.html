@@ -135,15 +135,14 @@
     // ************** Immutable base tree *****************
     var trees = {}
     var mainTree = {}
+    colorsUsed=[]
 
     // ************** Prepare meta controller: Hard code experts, main tree***************** 
     // NOTE: This will have to be switched to onClick to change per intersection (backend)
     hardCodeMetaController()
-    console.log("Meta")
-    console.log(mainTree)
     sessionStorage.setItem("metaController", JSON.stringify(mainTree))
     sessionStorage.setItem("trees", JSON.stringify(trees))
-    colorsUsed = sessionStorage.setItem("colorsUsed", JSON.stringify([]))
+    sessionStorage.setItem("colorsUsed", JSON.stringify(colorsUsed))
 </script>
 
 </html>

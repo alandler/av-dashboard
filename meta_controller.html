@@ -30,7 +30,7 @@
                 <a class="nav-item nav-link" href="index.html">Map</a>
                 <a class="nav-item nav-link active" href="meta_controller.html">Meta Controller <span
                         class="sr-only">(current)</span></a>
-                <a class="nav-item nav-link" onclick="setSessionStorage()" href="expert_creator.html">Build an
+                <a class="nav-item nav-link" href="expert_creator.html">Build an
                     Expert</a>
                 <a class="nav-item nav-link" href="logs.html">Logs</a>
                 <a class="nav-item nav-link" href="help.html">Help</a>
@@ -132,7 +132,7 @@
 </footer>
 
 <!-- Scripts -->
-<script src="scripts/globalVariables.js"></script>
+<!-- <script src="scripts/globalVariables.js"></script> -->
 <script src="scripts/parseTree.js"></script>
 <script src="scripts/drawTree.js"></script>
 <script src="scripts/sizing.js"></script>
@@ -140,16 +140,28 @@
 <script src="scripts/trees.js"></script>
 <script src="scripts/mainTreeEditor.js"></script>
 <script>
+    // ************** Set local variables *****************
+    margin = { top: 200, right: 10, bottom: 10, left: 20 },
+    width = 704 - margin.right - margin.left,
+    height = 800 - margin.top - margin.bottom;
+
     plainTree = {
         "nodes": { 0: { "id": 0, "label": "Root node", "x": width / 2, "y": 25, "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined } },
         "edges": { 0: [] },
         "head": 0
     }
 
+    // ************** Retrieve storage *****************
+    mainTree = parseSessionStorage("metaController")
+    trees = parseSessionStorage("trees")
+    colorsUsed = parseSessionStorage("colorsUsed")
+    console.log(colorsUsed)
+    console.log("WHATTS GB")
+
     // ************** Event listener for file input *****************
     const inputFileDiv = document.getElementById("file-selector-1")
     inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], getNextTreeID())) //e.target.id.substring(14)
-    var lastID = Object.keys(trees) == undefined ? 1 : Math.max(Object.keys(trees))
+    // var lastID = Object.keys(trees) == undefined ? 1 : Math.max(Object.keys(trees))
 
 
     // ************** Label the meta controller, set images *****************
@@ -162,12 +174,6 @@
         var streetSrc = "images/streets/street" + sessionStorage.getItem("intersectionID") + ".png"
         document.getElementById("streetViewImg").src = streetSrc
     }
-
-    // ************** Retrieve variables *****************
-    mainTree = parseSessionStorage("metaController")
-    console.log("Draw main tree")
-    console.log(mainTree)
-    trees = parseSessionStorage("trees")
 
     // ************** Build the interface *****************
     instantiateSVG()

@@ -1,6 +1,7 @@
 function colorGenerator() {
+    console.log("Prev colors: " + colorsUsed)
     var palette = ["#001524", "#15616D", "#FF7D00", "#78290F"]
-    var extendedPalette = ["#00427d", "#d6acd1", "#e65100", "FFECD1"]
+    var extendedPalette = ["#00427d", "#d6acd1", "#e65100", "#FFECD1"]
     var randomColor = "#000000"
 
     if (colorsUsed.length < 3) {
@@ -26,4 +27,19 @@ function applyColorToNodes(nodes, color) {
         nodes[key]["color"] = color
     }
     return nodes
+}
+
+function parseSessionStorage(key = "all") {
+    if (key == "all") {
+        return sessionStorage;
+    } else if (key in sessionStorage) {
+        if (sessionStorage.getItem(key) != "undefined") {
+            return JSON.parse(sessionStorage.getItem(key))
+        }
+        else {
+            return undefined
+        }
+    } else {
+        return undefined
+    }
 }

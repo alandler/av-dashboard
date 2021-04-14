@@ -10,19 +10,19 @@ var drag = d3.behavior.drag()
         d3.event.sourceEvent.stopPropagation()
     })
     .on('dragend', function (d) {
-        console.log("Drag ended")
         d3.select(this).remove()
         var nearNode = nearestNode(d.x, d.y)
-        console.log("Nearestt node" + nearNode)
-        //addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID = undefined, tree = mainTree)
-        console.log("Expert id: " + d.id)
-        addLeaf(e, nearNode, trees[d.id]["color"], d.id, mainTree)
+        console.log("dragged")
+        console.log(JSON.stringify(d))
+        addLeaf(e, nearNode, trees[d["id"]]["color"], d["id"], mainTree)
         // autosizeSVGWidthHeight()
         staticAutosize()
         var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false, getMaxDepth(mainTree))
         mainTree["nodes"] = n
         mainTree["edges"] = e
         // setLabelShowns()
+        console.log("trees after drag")
+        console.log(trees)
         redoSVG();
     })
 
@@ -48,9 +48,13 @@ function drawLegend() {
 
     //Dynamically create objects for each tree
     for (var key in trees) {
-        var xShift = Math.floor(key / 5)
-        var yShift = key % 5
-        data.push({ "id": key, "x": 10 + xShift, "y": yShift * 30, "color": trees[key]["color"], "description": trees[key]["description"] })
+        var xShift = Math.floor(key / 7)*200
+        var extraY = 0
+        if (xShift>0){
+            extraY = 30
+        }
+        var yShift = key % 7
+        data.push({ "id": key, "x": 10 + xShift, "y": yShift * 30 + extraY, "color": trees[key]["color"], "description": trees[key]["description"] })
     }
 
     //Write onto the existing SVG
@@ -340,7 +344,6 @@ function drawTree(tree) {
 
         // Enter is released
         if (e.keyCode == 13) {
-            console.log(e)
             tree["nodes"][field]["label"] = e.target.value
             e.target.remove()
             resetNodes(tree)
@@ -350,6 +353,8 @@ function drawTree(tree) {
 
 // ************** Instantiating Functions *****************
 function instantiateSVG(legend = true) {
+    console.log("Draw legend")
+    console.log(trees)
     var svg = d3.select("#svg").append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)

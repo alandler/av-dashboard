@@ -88,6 +88,7 @@ function hardCodeMetaController(){
         trees[i]["description"] = i==1? "Emergency expert":"Main expert"
         trees[i]["description"] = i==3? "8am expert":trees[i]["description"]
         trees[i]["color"] = colorGenerator()
+        trees[i]["expertID"] = i
         setFields(trees[i])
         applyColorToNodes(trees[i]["nodes"], trees[i]["color"])
     }
