@@ -13,6 +13,19 @@ function treeFromFile(file) {
 })
 }
 
+function getHeadLabel(edges) {
+    let possibleHeads = Object.keys(edges)
+    for (edge in edges) {
+        for (child of edges[edge]) {
+            var index = possibleHeads.indexOf(child);
+            if (index > -1) {
+                possibleHeads.splice(index, 1);
+            }
+        }
+    }
+    return possibleHeads[0]
+}
+
 function parseDot(text) {
     var nodes = {}
     var edges = {}
@@ -81,19 +94,16 @@ function hardCodeMetaController(){
     mainTree = {
         "nodes": { 0: { "id": 0, "label": "if emergency vehicle, right, else left", "x": width / 2, "y": 25, 
                 "color": "#999999", "shown": true, "depth": 0, "show_label": true, "expertID": undefined},
-                    1: { "id": 1, "label": "if 8am, right, else left", "x": width / 2-130, "y": 75, 
+                    1: { "id": 1, "label": "if 8am, right, else left", "x": width / 2-110, "y": 100, 
                 "color": "#999999", "shown": true, "depth": 1, "show_label": true, "expertID": undefined},
-                    2: { "id": 2, "label": "Emergency vehicle policy", "x": width / 2+130, "y": 75, 
+                    2: { "id": 2, "label": "Emergency vehicle policy", "x": width / 2+110, "y": 100, 
                 "color": trees[1]["color"], "shown": true, "depth": 1, "show_label": true, "expertID": 1},
-                3: { "id": 3, "label": "Main policy", "x": width / 2-130-65, "y": 125, 
+                3: { "id": 3, "label": "Main policy", "x": width / 2-110-55, "y": 175, 
                 "color": trees[2]["color"], "shown": true, "depth": 2, "show_label": true, "expertID": 2},
-                4: { "id": 4, "label": "8am policy", "x": width / 2-130+65, "y": 125, 
+                4: { "id": 4, "label": "8am policy", "x": width / 2-110+55, "y": 175, 
                 "color": trees[3]["color"], "shown": true, "depth": 2, "show_label": true, "expertID": 3},
             },
         "edges": { 0: [1,2], 1:[3,4], 2:[], 3:[], 4:[] },
         "head": 0,
     }
-    setFields(mainTree)
-    resetNodesWithNewPositions()
-
 }

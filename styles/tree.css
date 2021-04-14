@@ -19,7 +19,7 @@
 }
 
 #svg {
-    width: 740;
+    width: 705px;
     height:800px;
-    overflow:scroll;
+    /* overflow:scroll; Reinstate for dynamic sizing*/
 }

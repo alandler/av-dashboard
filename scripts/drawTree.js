@@ -1,12 +1,4 @@
-function getLeaves(tree = mainTree) {
-    var leaves = []
-    for (let node in tree["nodes"]) {
-        if (tree["edges"][node].length != 1 && tree["edges"][node].length != 2) {
-            leaves.push(node)
-        }
-    }
-    return leaves
-}
+// ************** Drag MAINTREE ONLY *****************
 
 var drag = d3.behavior.drag()
     // .origin(function (d) { return d })
@@ -20,19 +12,12 @@ var drag = d3.behavior.drag()
     .on('dragend', function (d) {
         d3.select(this).remove()
         var nearNode = nearestNode(d.x, d.y)
-        // var [newN, newE] = mergeTrees(mainTree["nodes"], trees[d.id]["nodes"],
-        //     mainTree["edges"], trees[d.id]["edges"],
-        //     nearNode, trees[d.id]["head"])
-        // mainTree["nodes"] = newN
-        // mainTree["edges"] = newE
         addLeaf(undefined, nearNode, mainTree, trees[d.id]["color"], d.id)
         autosizeSVGWidthHeight()
         var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false, getMaxDepth(mainTree))
         mainTree["nodes"] = n
         mainTree["edges"] = e
         setLabelShowns()
-        // resetNodes()
-        // drawLegend();
         redoSVG();
     })
 
@@ -51,12 +36,19 @@ function nearestNode(x, y) {
     return minNode
 }
 
+//TODO: Columns as these grow
 function drawLegend() {
     d3.selectAll("g.legend").remove()
     var data = []
+
+    //Dynamically create objects for each tree
     for (var key in trees) {
-        data.push({ "id": key, "x": 10, "y": key * 30, "color": trees[key]["color"], "description": trees[key]["description"] })
+        var xShift = Math.floor(key / 5)
+        var yShift = key % 5
+        data.push({ "id": key, "x": 10 + xShift, "y": yShift * 30, "color": trees[key]["color"], "description": trees[key]["description"] })
     }
+
+    //Write onto the existing SVG
     var svg = d3.select("svg")
     var legend = svg.selectAll("g.rect")
         .remove()
@@ -70,25 +62,21 @@ function drawLegend() {
         .attr("height", 15)
         .attr("x", function (d) { return d.x })
         .attr("y", function (d) { return d.y })
-        // .attr("transform", function (d) {
-        //     return "translate(" + 10 + "," + d * 30 + ")";
-        // })
-        // .on("ondragstart", dragged)
         .call(drag)
         .on('click', function () {
             if (d3.event.defaultPrevented) return;
         });
-    // .on("ondragstart", dragged)
 
+    // Add descriptions
     legend.append("text")
         .text(d => { return d.description })
         .attr("x", function (d) { return d.x + 20; })
-        .attr("y", function (d) { return d.y; })
+        .attr("y", function (d) { return d.y + 2; })
         .attr("dy", ".7em")
         .attr("text-anchor", "start")
 }
 
-function drawTree(tree = mainTree) {
+function drawTree(tree) {
     var nodes = tree["nodes"]
     var edges = tree["edges"]
     var head = tree["head"]
@@ -142,7 +130,7 @@ function drawTree(tree = mainTree) {
             .attr("cy", -8)
             .attr("r", 5)
             .attr("fill", d => {
-                if (edges[d["id"]].length == 0 || edges[d["id"]][0] == undefined) {
+                if (edges[d["id"]].length == 0 || !edges[d["id"]][0]) {
                     return "#ffffff"
                 }
                 // else if (nodes[edges[d["id"]][0]].shown){
@@ -158,14 +146,14 @@ function drawTree(tree = mainTree) {
             .on("contextmenu", function (d, i) {
                 d3.event.preventDefault();
                 handleRightClick(d, i);
-                redoSVG()
+                // redoSVG()
             });
 
         nodeEnter.append("text")
             .attr("text-anchor", "middle")
             .style("fill-opacity", 1)
             .text(function (d) {
-                if (nodes[d["id"]]["show_label"] == undefined || nodes[d["id"]]["show_label"] == false) {
+                if (!nodes[d["id"]]["show_label"] || nodes[d["id"]]["show_label"] == false) {
                     return ""
                 } else {
                     return d["label"]
@@ -184,22 +172,6 @@ function drawTree(tree = mainTree) {
             .on("click", function (d) { handleLabelClick(d, this) })
             .on("mouseover", handleLabelMouseOver)
             .on("mouseout", handleLabelMouseOut)
-
-
-        // nodeEnter.append("g")
-        //     .attr("dy", ".35em")
-        //     .attr("text-anchor", "middle")
-        //     .style("fill-opacity", 1)
-        //     .selectAll("text")
-        //     .data(d => d.label.split("\n"))
-        //     .enter().append("text")
-        //     .text(d => d)
-        //     .attr("dy", function (d, i) {
-        //         return 12 * i
-        //     })
-        //     .on("click", handleLabelClick)
-        //     .on("mouseover", handleLabelMouseOver)
-        //     .on("mouseout", handleLabelMouseOut)
 
         //Create links
         links = getLinks(nodes, edges);
@@ -248,7 +220,7 @@ function drawTree(tree = mainTree) {
     drawTree.update = update;
 
     function getChildren(source) {
-        if (edges[source] == undefined || edges[source].length == 0) {
+        if (!edges[source] || edges[source].length == 0) {
             return []
         }
         else if (edges[source].length == 1) {
@@ -264,7 +236,7 @@ function drawTree(tree = mainTree) {
             return
         } else if (children[0].shown) {
             collapse(d.id)
-            shiftVisibleNodes()
+            // shiftVisibleNodes()
             nodes[d.id].shown = true
             // redoSVG()
         } else {
@@ -276,31 +248,12 @@ function drawTree(tree = mainTree) {
     }
 
     function handleRightClick(d, i) {
-        // if (parseSessionStorage("addExpert") == true) {
-        //     var yes = confirm("Do you want to add to this node?")
-        //     if (yes == true) {
-        //         addLeaf(e, d.id, mainTree, parseSessionStorage("expertTree")["color"])
-        //         sessionStorage["addExpert"] = false
-        //         return
-        //     }
-        // }
-
         rightClickNode = d
         var menu = document.getElementById("tree-right-click-menu")
         menu.style.left = d3.event.pageX + "px"
         menu.style.top = d3.event.pageY + "px"
         menu.classList.add("context-menu-active")
         menu.classList.remove("context-menu")
-
-        return
-        if (edges[d["id"]].length == 0) {
-            confirm("Do you want to add a leaf node?")
-        } else if (Object.values(edges)) { // TODO
-            alert("Add a parent node?")
-        }
-        else {
-            alert("Cannot add a node here!")
-        }
     }
 
     // ************** D3 Operations *****************
@@ -382,11 +335,6 @@ function drawTree(tree = mainTree) {
 
         // Enter is released
         if (e.keyCode == 13) {
-            // var newString = mainTree["nodes"][field]["label"].replace(d, e.target.value)
-            console.log("e.target")
-            console.log(e.target)
-            console.log(field)
-
             tree["nodes"][field]["label"] = e.target.value
             e.target.remove()
             resetNodes(tree)
@@ -394,122 +342,11 @@ function drawTree(tree = mainTree) {
     }
 }
 
-function getNodeMaxID(nodes) {
-    var keys = Object.keys(nodes)
-    var asInts = keys.map(x => parseInt(x))
-    return Math.max(...asInts)
-}
-
-function mergeTrees(nodes1, nodes2, edges1, edges2, target, head2) {
-    //Sanity checks
-    if (!(target in Object.keys(nodes1))) {
-        alert("Target is not in the destination tree")
-        return
-    }
-
-    // Get new (non overlapping) IDs for the second tree
-    var newNodeIDs = {}
-    var maxID = getNodeMaxID(nodes1)
-    var nodes2Keys = Object.keys(nodes2)
-    for (var i = 0; i < nodes2Keys.length; i++) {
-        newNodeIDs[nodes2Keys[i]] = maxID + i + 1
-    }
-
-    //exchange nodes2 ids
-    var sortedKeysNodes2 = Object.keys(nodes2)
-    var copyNodes2 = {}
-    for (var i in sortedKeysNodes2) {
-        let temp = {}
-        temp = Object.assign(temp, nodes2[i]) //Assign temp to value of node
-        temp["id"] = newNodeIDs[i]
-        copyNodes2[i] = temp
-    }
-    nodes2 = {}
-    for (var i in sortedKeysNodes2) {
-        nodes2[newNodeIDs[i]] = copyNodes2[i]
-    }
-
-    var copyEdges2 = {}
-    for (var i in sortedKeysNodes2) {
-        if (edges2[i].length == 0) {
-            copyEdges2[i] = []
-            continue
-        }
-        copyEdges2[i] = edges2[i].map(x => newNodeIDs[x])
-    }
-    edges2 = {}
-    for (var i in sortedKeysNodes2) {
-        edges2[newNodeIDs[i]] = copyEdges2[i]
-    }
-
-    // remove remaining old entries
-    for (i = 0; i <= maxID; i++) {
-        delete nodes2[i]
-        delete edges2[i]
-    }
-
-    head2 = newNodeIDs[head2]
-
-    //Execute the merge
-    var nodes = { ...nodes1, ...nodes2 }
-    var edges = { ...edges1, ...edges2 }
-    edges[target].push(head2) //Add the link from the target node to the second tree's head
-
-    return [nodes, edges]
-}
-
-function getParent(nodeID, tree = mainTree) {
-    for (let i in tree["edges"]) {
-        if (tree["edges"][i].includes(nodeID)) {
-            return i
-        }
-    }
-    return null
-}
-
-// ************** Toggle/Set Functions *****************
-function toggleLabel(nodeID, tree = mainTree) {
-    console.log(tree)
-    if (tree["nodes"][nodeID]["show_label"] == undefined || tree["nodes"][nodeID]["show_label"] == false) {
-        tree["nodes"][nodeID]["show_label"] = true;
-    } else {
-        tree["nodes"][nodeID]["show_label"] = false;
-    }
-    resetNodes(tree)
-    setDisplayNoneContextMenu()
-}
-
-function convertLeafLabelAction(tree = mainTree) {
-    let leaves = getLeaves(tree)
-    for (var leaf_key of leaves) {
-        if (tree["nodes"][leaf_key]["action"] == undefined) {
-            continue
-        }
-        tree["nodes"][leaf_key]["label"] = tree["nodes"][leaf_key]["action"]
-    }
-}
-
 // ************** Instantiating Functions *****************
-function setLabelShowns(tree = mainTree) {
-    var maxDepth = getMaxDepth(tree)
-    var labelLimit = 3 / 4
-    for (var node in tree["nodes"]) {
-        if (tree["nodes"][node]["depth"] > maxDepth * labelLimit - 1) {
-            tree["nodes"][node]["show_label"] = false
-        } else {
-            tree["nodes"][node]["show_label"] = true
-        }
-        tree["nodes"][node]["show_label"] = true //Hard code
-    }
-}
-
 function instantiateSVG(legend = true) {
     var svg = d3.select("#svg").append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
-    // .call(d3.zoom().on("zoom", function () {
-    //     svg.attr("transform", d3.event.transform)
-    //  }))
 
     // Border SVG
     svg.append("rect")
@@ -533,40 +370,25 @@ function instantiateSVG(legend = true) {
             .style("stroke-width", 1);
     }
 }
+
 // ************** Reset Functions *****************
-function resetNodes(tree = mainTree) {
+function resetNodes(tree) {
     var svg = d3.select("svg")
     var node = svg.selectAll("g.node").remove()
     drawTree(tree)
 }
 
-function resetNodesWithNewPositions(tree = mainTree) {
-    autosizeSVGWidthHeight(tree)
-    var [n, e] = getNodePositions(tree["nodes"], tree["edges"], tree["head"], width / 2, 25, -1, false, getMaxDepth(tree))
-    tree["nodes"] = n
-    tree["edges"] = e
-
-    var svg = d3.select("svg")
-    var node = svg.selectAll("g.tree").remove()
-    drawTree(tree)
-}
-
-function redoSVG(tree = mainTree) {
-    var oldWidth = width
+function redoSVG(tree, legend = true) {
+    // var oldWidth = width
     var svg = d3.select("svg").remove()
-    autosizeSVGWidthHeight(tree)
-    for (var nodeID in mainTree["nodes"]) {
-        tree["nodes"][nodeID]["x"] += width / 2 - oldWidth / 2
-    }
+    // autosizeSVGWidthHeight(tree)
+    staticAutosize(tree)
+    // for (var nodeID in mainTree["nodes"]) {
+    //     tree["nodes"][nodeID]["x"] += width / 2 - oldWidth / 2
+    // }
     instantiateSVG()
-    if (tree == mainTree) {
+    if (legend == true) {
         drawLegend()
     }
     drawTree(tree)
-}
-
-function expandAll(tree = mainTree) {
-    for (var i in mainTree["nodes"]) {
-        mainTree["nodes"][i]["shown"] = true
-    }
 }

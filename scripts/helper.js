@@ -13,12 +13,14 @@ function colorGenerator() {
     colorsUsed.push(randomColor)
     return randomColor
 }
+
 function applyTreeIDToNodes(nodes, ID) {
     for (var key in nodes) {
         nodes[key]["treeID"] = ID
     }
     return nodes
 }
+
 function applyColorToNodes(nodes, color) {
     for (var key in nodes) {
         nodes[key]["color"] = color

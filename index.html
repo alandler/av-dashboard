@@ -22,8 +22,6 @@
 
     <!-- CSS-->
     <link href="styles/base.css" rel="stylesheet">
-    <link href="styles/tree.css" rel="stylesheet">
-    <link href="styles/table.css" rel="stylesheet">
     <link href="styles/map.css" rel="stylesheet">
 </head>
 
@@ -106,36 +104,46 @@
                 <div id="mapid"></div>
             </div>
             <div class="col-3">
-                <a class="twitter-timeline" data-height="650" href="https://twitter.com/UDOTTRAFFIC?ref_src=twsrc%5Etfw">Tweets by UDOTTRAFFIC</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                <a class="twitter-timeline" data-height="650"
+                    href="https://twitter.com/UDOTTRAFFIC?ref_src=twsrc%5Etfw">Tweets by UDOTTRAFFIC</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
         </div>
     </div>
 
 </body>
 
-<footer class = "footer">
+<footer class="footer">
     Made at Wu Lab at MIT 2021
 </footer>
 
-<script src="scripts/require.js"></script>
-<script src="scripts/globalVariables.js"></script>
+<script>colorsUsed = []
+    margin = { top: 150, right: 10, bottom: 10, left: 20 },
+        width = 704 - margin.right - margin.left,
+        height = 800 - margin.top - margin.bottom;
+    nodeGap = 50
+</script>
+<script src="scripts/dtPolicyStrings.js"></script>
+<script src="scripts/map.js"></script>
 <script src="scripts/parseTree.js"></script>
 <script src="scripts/drawTree.js"></script>
+<script src="scripts/sizing.js"></script>
 <script src="scripts/helper.js"></script>
 <script src="scripts/trees.js"></script>
 <script src="scripts/mainTreeEditor.js"></script>
-<script src="scripts/writeDot.js"></script>
-<script src="scripts/map.js"></script>
 <script>
-    // ************** Set new margin for map element *****************
-    margin = { top: 10, right: 10, bottom: 10, left: 10 },
-        width = 1020 - margin.right - margin.left,
-        height = 2000 - margin.top - margin.bottom;
+    // ************** Immutable base tree *****************
+    var trees = {}
+    var mainTree = {}
 
-    // ************** Initialize cookie *****************
-    setSessionStorage()
+    // ************** Prepare meta controller: Hard code experts, main tree***************** 
+    // NOTE: This will have to be switched to onClick to change per intersection (backend)
+    hardCodeMetaController()
+    console.log("Meta")
+    console.log(mainTree)
+    sessionStorage.setItem("metaController", JSON.stringify(mainTree))
+    sessionStorage.setItem("trees", JSON.stringify(trees))
+    colorsUsed = sessionStorage.setItem("colorsUsed", JSON.stringify([]))
 </script>
-
-<script src="scripts/tests.js"></script>
 
 </html>

@@ -3,7 +3,7 @@
 <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <!-- d3 -->
     <script src="https://d3js.org/d3.v6.js"></script>
@@ -19,90 +19,92 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#"><img width="30px" height="20px" src="images/DTLight_2.svg"></img></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#"><img width="30px" height="20px" src="images/DTLight_2.svg"></img></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a class="nav-item nav-link" href="index.html">Map</a>
-            <a class="nav-item nav-link" href="meta_controller.html">Meta Controller <span
-                    class="sr-only">(current)</span></a>
-            <a class="nav-item nav-link active" href="expert_creator.html">Build an Expert</a>
-            <a class="nav-item nav-link" href="logs.html">Logs</a>
-            <a class="nav-item nav-link" href="help.html">Help</a>
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="index.html">Map</a>
+                <a class="nav-item nav-link" href="meta_controller.html">Meta Controller <span
+                        class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link active" href="expert_creator.html">Build an Expert</a>
+                <a class="nav-item nav-link" href="logs.html">Logs</a>
+                <a class="nav-item nav-link" href="help.html">Help</a>
+            </div>
         </div>
+    </nav>
+
+    <div id="heading">
+        <h1 id="intersectionLabel">
+            Policy View : Intersection 152 : Mass Av
+        </h1>
+        <h4>Current policy : emergency vehicles </h4>
+        <b id="instructions">Instructions</b>
+        <p>Here you can edit existing experts (accessed through right clicking a node in the meta controller) or develop
+            new experts. If you create an expert, you can export it, or save it to the meta controller.</p>
+
     </div>
-</nav>
 
-<div id="heading">
-    <h1>
-        Policy View : Intersection 152 : Mass Av
-    </h1>
-    <h4>Current policy : emergency vehicles </h4>
-    <b id="instructions">Instructions</b>
-    <p>Here you can edit existing experts (accessed through right clicking a node in the meta controller) or develop new experts. If you create an expert, you can export it, or save it to the meta controller.</p>
-
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-9" id="svg"></div>
-        <div class="col-3">
-            <div class="row">
-                <div class="col upload">
-                    <p> Control tools </p>
-                    <button id="export-dotfile" onclick="clearRightClickNode()">Reset Expert View</button>
-                    <button id="export-dotfile" onclick="writeDot()">Export dotfile</button>
-                    <button id="export-dotfile" onclick="saveExpert()">Save expert</button>
-                    <p></p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-9" id="svg"></div>
+            <div class="col-3">
+                <div class="row">
+                    <div class="col upload">
+                        <p> Control tools </p>
+                        <button id="export-dotfile" onclick="clearRightClickNode()">Reset Expert View</button>
+                        <button id="export-dotfile" onclick="writeDot()">Export dotfile</button>
+                        <button id="export-dotfile" onclick="saveExpert()">Save expert</button>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <p> &nbsp &nbsp State space diagram of the selected intersection </p>
+                </div>
+                <div class="row state">
+                    <img width="95%" src="images/states.png" style="align-self:center" />
+                </div>
+                <div class="row">
+                    <br>
+                    <p> &nbsp &nbsp Each road segment is divided into cells and the input to the model consist of 80
+                        such cells. </p>
                 </div>
             </div>
-            <div class="row">
-                <p> &nbsp &nbsp State space diagram of the selected intersection </p>
-            </div>
-            <div class="row state">
-                <img width="95%" src="images/states.png" align="center"/>
-            </div>
-            <div class="row">
-                <br>
-                <p> &nbsp &nbsp Each road segment is divided into cells and the input to the model consist of 80 such cells. </p>
-            </div>
         </div>
     </div>
-</div>
 
-<nav class="context-menu" id="tree-right-click-menu">
-    <ul class="context-menu-items">
-        <li class="context-menu-item" onclick="addParent(event)">
-            <!-- <a href="#" onclick="addParent(event)" class="context-menu-link"> -->
-            <i class="fa fa-eye"></i> Add Parent Node
-            <!-- </a> -->
-        </li>
-        <li class="context-menu-item" onclick="addLeaf(event)">
-            <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
-            <i class="fa fa-edit"></i> Add Leaf Node
-            <!-- </a> -->
-        </li>
-        <li class="context-menu-item" onclick="deleteNode(rightClickNode.id)">
-            <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
-            <i class="fa fa-edit"></i> Delete Node
-            <!-- </a> -->
-        </li>
-        <li class="context-menu-item" onclick="toggleLabel(rightClickNode.id, expertTree)">
-            <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
-            <i class="fa fa-edit"></i> Show/Hide Label
-            <!-- </a> -->
-        </li>
-        <li class="context-menu-item" onclick="setDisplayNoneContextMenu()">
-            <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
-            <i class="fa fa-edit"></i> Cancel
-            <!-- </a> -->
-        </li>
-    </ul>
-</nav>
+    <nav class="context-menu" id="tree-right-click-menu">
+        <ul class="context-menu-items">
+            <li class="context-menu-item" onclick="addParent(event)">
+                <!-- <a href="#" onclick="addParent(event)" class="context-menu-link"> -->
+                <i class="fa fa-eye"></i> Add Parent Node
+                <!-- </a> -->
+            </li>
+            <li class="context-menu-item" onclick="addLeaf(event, rightClickNode.id, currentColor, currentExpertID)">
+                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
+                <i class="fa fa-edit"></i> Add Leaf Node
+                <!-- </a> -->
+            </li>
+            <li class="context-menu-item" onclick="deleteNode(rightClickNode.id)">
+                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
+                <i class="fa fa-edit"></i> Delete Node
+                <!-- </a> -->
+            </li>
+            <li class="context-menu-item" onclick="toggleLabel(rightClickNode.id)">
+                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
+                <i class="fa fa-edit"></i> Show/Hide Label
+                <!-- </a> -->
+            </li>
+            <li class="context-menu-item" onclick="setDisplayNoneContextMenu()">
+                <!-- <a href="#" onclick="addLeaf(event)" class="context-menu-link"> -->
+                <i class="fa fa-edit"></i> Cancel
+                <!-- </a> -->
+            </li>
+        </ul>
+    </nav>
 </body>
 
 <footer class="footer">
@@ -123,35 +125,54 @@
 <script src="scripts/mainTreeEditor.js"></script>
 <script src="scripts/writeDot.js"></script>
 <script>
-    margin = {top: 10, right: 10, bottom: 10, left: 10},
-        width = 1065 //- margin.right - margin.left,
+    margin = { top: 10, right: 10, bottom: 10, left: 10 },
+        width = 900 //- margin.right - margin.left,
     // height = 600 - margin.top - margin.bottom;
 
-    colorsUsed = parseSessionStorage("colorsUsed")
-
-    var storedTrees = parseSessionStorage("trees")
+    document.getElementById("intersectionLabel").innerHTML = "Policy View: Intersection " + sessionStorage.getItem("intersectionID") + " : " + sessionStorage.getItem("intersectionName")
+    //Access variables
+    var colorsUsed = parseSessionStorage("colorsUsed")
+    var trees = parseSessionStorage("trees")
     var storedRightClickNode = parseSessionStorage("rightClickNode")
+
+    var currentColor = "#999999"
+    var currentExpertID = undefined
+
+    //Create SVG
     instantiateSVG(false)
+
+    //Determine what case: modify expert, make node into expert, build expert
     var newExpert = true
-    if (storedTrees == undefined || Object.keys(storedTrees).length == 0 || storedRightClickNode == undefined) {
+    console.log(storedRightClickNode)
+    //Case entirely new build
+    if (!storedRightClickNode) { //No right click means new build
+        console.log("No build")
         addExpert = true
-        Object.assign(expertTree, plainTree)
+        Object.assign(expertTree, plainTree) //Init plain expert tree, assign main
         mainTree = expertTree
-        drawTree(expertTree)
-    } else {
+        resetNodesWithNewPositions(mainTree)
+        drawTree(mainTree)
+    }
+    //Case modification/creation
+    else {
         var newExpert = false
-        expertTree = storedTrees[storedRightClickNode["expertID"]]
+        expertTree = trees[storedRightClickNode["expertID"]] //Access existing expertTree (view)
+        console.log(trees[storedRightClickNode["expertID"]])
+
+        currentExpertID = storedRightClickNode["expertID"]
+        currentColor = expertTree["color"]
+
+        mainTree = expertTree
+
         setLabelShowns(expertTree)
         resetNodesWithNewPositions(expertTree)
-        redoSVG(expertTree)
+        redoSVG(mainTree, false)
     }
 
     function saveExpert() {
-        trees = storedTrees
+        //Add the expert to the trees, with color
         if (addExpert == true) {
-            var metaController = parseSessionStorage("mainTree")
-            Object.assign(mainTree, expertTree)
-            mainTree = metaController
+            // Get treeID
             var treeID = undefined
             try {
                 treeID = getNextTreeID()
@@ -159,35 +180,40 @@
                 treeID = 1
             }
             console.log("Next TREE ID: " + treeID)
+
+            //Set new atributes
             expertTree["expertID"] = treeID
             expertTree["color"] = colorGenerator()
             expertTree["nodes"] = applyColorToNodes(expertTree["nodes"], expertTree["color"])
-            storedTrees[treeID] = expertTree
+            trees[treeID] = expertTree
             addExpert = true
             var description = prompt("Describe your expert")
             expertTree["description"] = description
+
             console.log(Object.keys(trees) + treeID)
-            window.location.href = "meta_controller.html"
+
+            sessionStorage.setItem("trees", trees)
+            sessionStorage.setItem("expertTree", JSON.stringify(expertTree))
 
         } else {
-            trees = storedTrees
-            storedTrees[storedRightClickNode["id"]] = expertTree
-            rightClickNode = storedRightClickNode
+            trees[storedRightClickNode["id"]] = expertTree
+            sessionStorage.setItem("trees", JSON.stringify(trees))
+            sessionStorage.setItem("expertTree", JSON.stringify(mainTree))
             addExpert = true
         }
-        setSessionStorage()
+        window.location.href = "meta_controller.html"
     }
 
     function clearRightClickNode() {
-        // width = 1020 - margin.right - margin.left,
-        sessionStorage["rightClickNode"] = undefined
-        Object.assign(expertTree, mainTree)
+        // sessionStorage.setItem("rightClickNode", JSON.stringify(rightClickNode))
+        rightClickNode = undefined
+        sessionStorage.setItem("rightClickNode", undefined)
+        Object.assign(expertTree, plainTree)
+        mainTree = expertTree
         var svg = d3.select("svg").remove()
         instantiateSVG(false)
-        drawTree()
+        drawTree(mainTree)
     }
 </script>
-
-<script src="scripts/tests.js"></script>
 
 </html>
