@@ -17,7 +17,8 @@ var drag = d3.behavior.drag()
         //addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID = undefined, tree = mainTree)
         console.log("Expert id: " + d.id)
         addLeaf(e, nearNode, trees[d.id]["color"], d.id, mainTree)
-        autosizeSVGWidthHeight()
+        // autosizeSVGWidthHeight()
+        staticAutosize()
         var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false, getMaxDepth(mainTree))
         mainTree["nodes"] = n
         mainTree["edges"] = e
@@ -167,7 +168,7 @@ function drawTree(tree) {
                 var parent = getParent(d["id"], tree)
                 var j = 0
                 if (parent != null) {
-                    if (d["id"] != edges[parent][0] && d["depth"] > 5) {
+                    if (d["id"] != edges[parent][0] && (d["depth"] > 3 && tree==mainTree)) {
                         j = .65
                     }
                 }

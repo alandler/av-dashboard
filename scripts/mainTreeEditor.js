@@ -191,8 +191,8 @@ function getNodeMaxID(nodes) {
 }
 
 function getParent(nodeID, tree = mainTree) {
-    console.log("Get the parent of node: " + nodeID)
-    console.log(tree)
+    // console.log("Get the parent of node: " + nodeID)
+    // console.log(tree)
     for (let i in tree["edges"]) {
         if (tree["edges"][i].includes(nodeID)) {
             return i
