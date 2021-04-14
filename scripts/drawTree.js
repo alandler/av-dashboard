@@ -10,14 +10,18 @@ var drag = d3.behavior.drag()
         d3.event.sourceEvent.stopPropagation()
     })
     .on('dragend', function (d) {
+        console.log("Drag ended")
         d3.select(this).remove()
         var nearNode = nearestNode(d.x, d.y)
-        addLeaf(undefined, nearNode, mainTree, trees[d.id]["color"], d.id)
+        console.log("Nearestt node" + nearNode)
+        //addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID = undefined, tree = mainTree)
+        console.log("Expert id: " + d.id)
+        addLeaf(e, nearNode, trees[d.id]["color"], d.id)
         autosizeSVGWidthHeight()
         var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false, getMaxDepth(mainTree))
         mainTree["nodes"] = n
         mainTree["edges"] = e
-        setLabelShowns()
+        // setLabelShowns()
         redoSVG();
     })
 
@@ -379,7 +383,7 @@ function resetNodes(tree) {
     drawTree(tree)
 }
 
-function redoSVG(tree, legend = true) {
+function redoSVG(tree=mainTree, legend = true) {
     // var oldWidth = width
     var svg = d3.select("svg").remove()
     // autosizeSVGWidthHeight(tree)
