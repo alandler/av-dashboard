@@ -39,7 +39,7 @@
     </nav>
 
     <div id="heading">
-        <h2>
+        <h2 id = "intersectionLabel">
             Meta Controller : Intersection 152 : Mass Av.
         </h2>
         <b id="instructions">Instructions</b>
@@ -67,10 +67,10 @@
                     </div>
                 </div>
                 <p> The bird's view of the selected intersection </p>
-                <img width = "100%" src = "images/satellite_view.png">
+                <img id = "birdViewImg" width = "100%" src = "images/satellite_view.png">
                 <br>
                 <p> The street view of the selected intersection </p>
-                <img width = "100%" src = "images/street_view.png">
+                <img id = "streetViewImg" width = "100%" src = "images/street_view.png">
             </div>
             <div class="col-6" id="svg"></div>
             <div class="col-3">
@@ -143,14 +143,18 @@
 <script src="scripts/mainTreeEditor.js"></script>
 <script>
     // localVariablesSessionStorage()
-    height = 550
+    // height = 550
+    // width = 575
     colorsUsed= parseSessionStorage("colorsUsed")
     // ************** Event listener for file input *****************
     const inputFileDiv = document.getElementById("file-selector-1")
     inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], getNextTreeID())) //e.target.id.substring(14)
     var lastID = Object.keys(trees) == undefined ? 1 : Math.max(Object.keys(trees))
 
+    intersectionID = 
+    document.getElementById("intersectionLabel").innerHTML = "Meta Controller : Intersection "+sessionStorage.getItem("intersectionID")+" : "+sessionStorage.getItem("intersectionName")
 
+    setImages()
     // ************** Hard code meta controller *****************
     if (parseSessionStorage("mainTree") != undefined) {
         mainTree = parseSessionStorage("mainTree")
@@ -169,15 +173,23 @@
 
     // ************** If right click node is undefined, select appropriate node *****************
     addExpert = parseSessionStorage("addExpert")
-    if (addExpert== true) {
-        expandAll()
-        alert("To select a node, right click it. If you want to add nodes before adding the expert, press cancel, and the normal menu will appear.")
-    }
+    // if (addExpert== true) {
+    //     expandAll()
+    //     alert("To select a node, right click it. If you want to add nodes before adding the expert, press cancel, and the normal menu will appear.")
+    // }
 
     instantiateSVG()
     drawLegend()
     drawTree()
     // setSessionStorage()
+
+    function setImages(){
+        var birdSrc = "images/birds/bird" + sessionStorage.getItem("intersectionID") +".png"
+        document.getElementById("birdViewImg").src = birdSrc
+
+        var streetSrc = "images/streets/street" + sessionStorage.getItem("intersectionID")+".png"
+        document.getElementById("streetViewImg").src = streetSrc
+    }
 </script>
 
 <script src="scripts/tests.js"></script>

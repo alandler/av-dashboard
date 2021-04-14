@@ -78,10 +78,12 @@ function addLeaf(e, nodeID = rightClickNode, tree = mainTree, nodeColor = "#9999
     else {
         let prevID = getNodeMaxID(tree["nodes"])
         let newID = prevID + 1
+        addExpert = JSON.parse(sessionStorage.getItem("addExpert"))
+        expertTree = JSON.parse(sessionStorage.getItem("expertTree"))
         tree["nodes"][newID] =
         {
             "id": newID,
-            "label": "Default label",
+            "label": addExpert == true? expertTree["description"]:"Default label",
             "x": width / 2,
             "y": 25,
             "color": nodeColor,

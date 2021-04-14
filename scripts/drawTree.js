@@ -276,14 +276,14 @@ function drawTree(tree = mainTree) {
     }
 
     function handleRightClick(d, i) {
-        if (parseSessionStorage("addExpert") == true) {
-            var yes = confirm("Do you want to add to this node?")
-            if (yes == true) {
-                addLeaf(e, d.id, mainTree, parseSessionStorage("expertTree")["color"])
-                sessionStorage["addExpert"] = false
-                return
-            }
-        }
+        // if (parseSessionStorage("addExpert") == true) {
+        //     var yes = confirm("Do you want to add to this node?")
+        //     if (yes == true) {
+        //         addLeaf(e, d.id, mainTree, parseSessionStorage("expertTree")["color"])
+        //         sessionStorage["addExpert"] = false
+        //         return
+        //     }
+        // }
 
         rightClickNode = d
         var menu = document.getElementById("tree-right-click-menu")

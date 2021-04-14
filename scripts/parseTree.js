@@ -42,7 +42,6 @@ function parseDot(text) {
             attributeList[0] = attributeList[0].substring(7, attributeList[0].length)
             // convert <= to present or not
             var cellData = attributeList[0].split(" ")
-            console.log("Cell data:" +cellData)
             if (cellData[2]=="<=" && cellData[3]=="0.5"){
                 s = "Cell " + cellData[1] + ": present"
             } else if (cellData[2]==">=" && cellData[3]==".5"){
@@ -77,10 +76,7 @@ function hardCodeMetaController(){
         trees[i]["description"] = i==3? "8am expert":trees[i]["description"]
         trees[i]["color"] = colorGenerator()
         setFields(trees[i])
-        console.log(trees)
         applyColorToNodes(trees[i]["nodes"], trees[i]["color"])
-        console.log("trees:")
-        console.log(trees)
     }
     mainTree = {
         "nodes": { 0: { "id": 0, "label": "if emergency vehicle, right, else left", "x": width / 2, "y": 25, 
@@ -97,7 +93,6 @@ function hardCodeMetaController(){
         "edges": { 0: [1,2], 1:[3,4], 2:[], 3:[], 4:[] },
         "head": 0,
     }
-    console.log(trees)
     setFields(mainTree)
     resetNodesWithNewPositions()
 

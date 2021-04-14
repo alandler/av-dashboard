@@ -1,12 +1,4 @@
-var mymap = L.map('mapid').setView([42.3601, -71.0942], 17);
-
-markers = [[42.357413, -71.092688],
-            [42.357120, -71.092549],
-            [42.360140, -71.094898],
-            [42.360838, -71.096035],
-            [42.361734, -71.097559],
-            [42.362641, -71.098887]
-]
+var mymap = L.map('mapid').setView([40.769362282341, -111.89292606763536], 17);
 
 mapbox_token = "pk.eyJ1IjoiYWxhbmRsZXIiLCJhIjoiY2tidjU1a3duMDJwajJ5bnhyYnZoMWgwdCJ9.wf5Fpih6PEVLN-LW_uAY_A"
 z = "512"
@@ -22,10 +14,15 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: mapbox_token
 }).addTo(mymap);
 
-for (let position of markers){
+for (let i in markers){
     // console.log("Position: " + position)
+    position = markers[i]
     var marker = L.marker([position[0], position[1]]).addTo(mymap).on('click', function(e) {
-        console.log(e.latlng)
+        console.log(typeof(i))
+        intersectionID = 150 + parseInt(i)
+        sessionStorage.setItem("intersectionID", intersectionID)
+        sessionStorage.setItem("intersectionName", intersectionNames[i])
+        console.log("Intersection " + (intersectionID) + ": " + intersectionNames[i])
         window.location = "meta_controller.html";
         // window.open("index.html");
     });;
