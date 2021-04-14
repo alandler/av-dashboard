@@ -56,6 +56,7 @@ function addParent(e, tree = mainTree) {
 
 function addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID = undefined, tree = mainTree) {
     console.log("Add leaf to node: " + nodeID)
+    console.log(trees)
     //Check if leaves are full
     if (tree["edges"][nodeID].length == 2) {
         alert("Leaves full")

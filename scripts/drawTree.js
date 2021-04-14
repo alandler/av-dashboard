@@ -16,7 +16,7 @@ var drag = d3.behavior.drag()
         console.log("Nearestt node" + nearNode)
         //addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID = undefined, tree = mainTree)
         console.log("Expert id: " + d.id)
-        addLeaf(e, nearNode, trees[d.id]["color"], d.id)
+        addLeaf(e, nearNode, trees[d.id]["color"], d.id, mainTree)
         autosizeSVGWidthHeight()
         var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false, getMaxDepth(mainTree))
         mainTree["nodes"] = n
