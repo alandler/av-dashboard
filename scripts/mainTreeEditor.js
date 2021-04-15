@@ -115,11 +115,9 @@ function deleteRecursive(nodeID, tree = mainTree) {
 function makeExpert(nodeID, tree = mainTree) {
     //If the node has an expertID, this will be a show operation. Store the relevant expert
     if (tree["nodes"][nodeID]["expertID"]) {
-        console.log("Show experttt: " + tree["nodes"][nodeID]["expertID"])
-        var treeID = parseInt(tree["nodes"][nodeID]["expertID"])
-        console.log(trees)
+        console.log("Show expert: " + tree["nodes"][nodeID]["expertID"])
+        var treeID = tree["nodes"][nodeID]["expertID"]
         expertTree = trees[treeID]
-        console.log(expertTree)
         console.log(trees)
     }
     // If the node has no expertID, turn the node into an expert (save rightClickNode, make expert the node itself)
@@ -149,6 +147,8 @@ function makeExpert(nodeID, tree = mainTree) {
         expertTree["color"] = expertTree["nodes"][0]["color"]
         expertTree["nodes"] = applyColorToNodes(expertTree["nodes"], expertTree["color"])
 
+        rightClickNode = expertTree["nodes"][0] //Update right click node to include new properties
+
         //Assign the expert to the tree
         trees[treeID] = expertTree
         console.log("fin lk")
@@ -159,12 +159,9 @@ function makeExpert(nodeID, tree = mainTree) {
     sessionStorage.setItem("colorsUsed", JSON.stringify(colorsUsed))
     sessionStorage.setItem("expertTree", JSON.stringify(expertTree))
     sessionStorage.setItem("trees", JSON.stringify(trees))
-    rightClickNode = expertTree["nodes"][0] //Update right click node to include new properties
     sessionStorage.setItem("rightClickNode", JSON.stringify(rightClickNode))
-    // drawLegend()
-    // redoSVG()
-    // console.log(mainTree)
-    // console.log("Term")
+    console.log("Right click node")
+    console.log(rightClickNode)
     window.location.href = "expert_creator.html"
 }
 

@@ -180,9 +180,11 @@
         resetNodesWithNewPositions(expertTree)
         redoSVG(mainTree, false)
     }
+    console.log("Build addExpert:" + addExpert)
 }
 
     function saveExpert() {
+        console.log("Save expert")
         //Add the expert to the trees, with color
         if (addExpert == true) {
             //Prompt for description

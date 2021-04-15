@@ -43,6 +43,8 @@ function nearestNode(x, y) {
 
 //TODO: Columns as these grow
 function drawLegend() {
+    console.log("Draw legend with the following mainTree")
+    console.log(trees)
     d3.selectAll("g.legend").remove()
     var data = []
 
