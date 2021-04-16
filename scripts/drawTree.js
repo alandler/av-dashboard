@@ -10,7 +10,7 @@ var drag = d3.behavior.drag()
         d3.event.sourceEvent.stopPropagation()
     })
     .on('dragend', function (d) {
-        addExpert = true
+        // addExpert = true
         d3.select(this).remove()
         var nearNode = nearestNode(d.x, d.y)
         console.log("dragged")
@@ -23,6 +23,7 @@ var drag = d3.behavior.drag()
         mainTree["edges"] = e
         // setLabelShowns()
         addExpert = false
+        sessionStorage.setItem("addExpert", false)
         sessionStorage.setItem("metaController", JSON.stringify(mainTree))
         console.log("trees after drag")
         console.log(trees)

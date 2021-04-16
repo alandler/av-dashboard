@@ -63,12 +63,12 @@ function addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID 
     else {
         let prevID = getNodeMaxID(tree["nodes"])
         let newID = prevID + 1
-        addExpert = parseSessionStorage("addExpert")
-        expertTree = parseSessionStorage("expertTree")
+        // addExpert = parseSessionStorage("addExpert")
+        // expertTree = parseSessionStorage("expertTree")
         tree["nodes"][newID] =
         {
             "id": newID,
-            "label": addExpert == true ? expertTree["description"] : "Default label",
+            "label": addExpert == true && window.location.href =="index.html" ? expertTree["description"] : "Default label",
             "x": width / 2,
             "y": 25,
             "color": nodeColor,
@@ -76,8 +76,8 @@ function addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID 
             "show_label": true,
             "expertID": expertID
         }
-        addExpert = false
-        sessionStorage.setItem("addExpert", addExpert)
+        // addExpert = false
+        // sessionStorage.setItem("addExpert", addExpert)
         tree["edges"][nodeID].push(newID)
         resetNodesWithNewPositions(tree)
     }
