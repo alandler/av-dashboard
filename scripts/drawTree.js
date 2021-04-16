@@ -10,25 +10,56 @@ var drag = d3.behavior.drag()
         d3.event.sourceEvent.stopPropagation()
     })
     .on('dragend', function (d) {
-        // addExpert = true
+        addExpert = true
         d3.select(this).remove()
+        console.log("X: " + d.x +" ...Y: " + d.y)
         var nearNode = nearestNode(d.x, d.y)
-        console.log("dragged")
+        console.log("dragged" + nearNode)
         console.log(JSON.stringify(d))
-        addLeaf(e, nearNode, trees[d["id"]]["color"], d["id"], mainTree)
-        // autosizeSVGWidthHeight()
-        staticAutosize()
-        var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false, getMaxDepth(mainTree))
-        mainTree["nodes"] = n
-        mainTree["edges"] = e
-        // setLabelShowns()
-        addExpert = false
-        sessionStorage.setItem("addExpert", false)
-        sessionStorage.setItem("metaController", JSON.stringify(mainTree))
+        if (isExpertIDInMainTree(d["id"]) == true) {
+            alert("That expert is already in the tree. To change its location, remove it and drag again.")
+        } else if (isNodeIDAnExpert(nearNode) == true) {
+            alert("Do not add an expert below an expert.")
+        }else {
+            var tempTree = parseSessionStorage("expertTree")
+            expertTree = trees[d["id"]]
+            sessionStorage.setItem("expertTree", JSON.stringify(expertTree))
+            console.log(expertTree["description"])
+            addLeaf(e, nearNode, trees[d["id"]]["color"], d["id"], mainTree)
+            expertTree = tempTree
+            sessionStorage.setItem("expertTree", JSON.stringify(expertTree))
+            // autosizeSVGWidthHeight()
+            // IF the expert is already in the meta controller... prompt to delete and re add
+            console.log(mainTree)
+            console.log(isExpertIDInMainTree(d["id"]))
+            console.log("SE E AOEVE")
+            staticAutosize()
+            var [n, e] = getNodePositions(mainTree["nodes"], mainTree["edges"], mainTree["head"], width / 2, 25, -1, false, getMaxDepth(mainTree))
+            mainTree["nodes"] = n
+            mainTree["edges"] = e
+            // setLabelShowns()
+            addExpert = false
+            sessionStorage.setItem("addExpert", false)
+            sessionStorage.setItem("metaController", JSON.stringify(mainTree))
+        }
         console.log("trees after drag")
         console.log(trees)
         redoSVG();
     })
+function isNodeIDAnExpert(ID){
+    if (mainTree["nodes"][ID]["expertID"]){
+        return true
+    }
+    return false
+}
+function isExpertIDInMainTree(ID) {
+    for (var node in mainTree["nodes"]) {
+        if (mainTree["nodes"][node].expertID == ID) {
+            return true
+        }
+    }
+    return false
+}
 
 function nearestNode(x, y) {
     var minDist = Infinity
@@ -54,9 +85,9 @@ function drawLegend() {
 
     //Dynamically create objects for each tree
     for (var key in trees) {
-        var xShift = Math.floor(key / 7)*200
+        var xShift = Math.floor(key / 7) * 200
         var extraY = 0
-        if (xShift>0){
+        if (xShift > 0) {
             extraY = 30
         }
         var yShift = key % 7
@@ -178,7 +209,7 @@ function drawTree(tree) {
                 var parent = getParent(d["id"], tree)
                 var j = 0
                 if (parent != null) {
-                    if (d["id"] != edges[parent][0] && (d["depth"] > 3 && tree==mainTree)) {
+                    if (d["id"] != edges[parent][0] && (d["depth"] > 3 && tree == mainTree)) {
                         j = .65
                     }
                 }
@@ -395,7 +426,7 @@ function resetNodes(tree) {
     drawTree(tree)
 }
 
-function redoSVG(tree=mainTree, legend = true) {
+function redoSVG(tree = mainTree, legend = true) {
     // var oldWidth = width
     var svg = d3.select("svg").remove()
     // autosizeSVGWidthHeight(tree)

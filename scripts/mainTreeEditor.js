@@ -61,14 +61,19 @@ function addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID 
         alert("Leaves full")
     }
     else {
+        console.log("LOOOOK HERE")
         let prevID = getNodeMaxID(tree["nodes"])
         let newID = prevID + 1
         // addExpert = parseSessionStorage("addExpert")
-        // expertTree = parseSessionStorage("expertTree")
+        console.log(window.location.href)
+        console.log("add Expert:" + addExpert)
+        expertTree = parseSessionStorage("expertTree")
+        var endURL = window.location.href.substring(window.location.href.length-"meta_controller.html".length,window.location.href.length)
+        console.log(endURL)
         tree["nodes"][newID] =
         {
             "id": newID,
-            "label": addExpert == true && window.location.href =="index.html" ? expertTree["description"] : "Default label",
+            "label": addExpert == true &&  endURL=="meta_controller.html" ? expertTree["description"] : "Default label",
             "x": width / 2,
             "y": 25,
             "color": nodeColor,

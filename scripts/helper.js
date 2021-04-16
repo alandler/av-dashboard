@@ -30,6 +30,7 @@ function applyColorToNodes(nodes, color) {
 }
 
 function parseSessionStorage(key = "all") {
+    console.log("Parse key:" + key)
     if (key == "all") {
         return sessionStorage;
     } else if (key in sessionStorage) {
