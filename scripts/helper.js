@@ -1,7 +1,7 @@
 function colorGenerator() {
     console.log("Prev colors: " + colorsUsed)
     var palette = ["#001524", "#15616D", "#FF7D00", "#78290F"]
-    var extendedPalette = ["#00427d", "#d6acd1", "#e65100", "#FFECD1"]
+    var extendedPalette = ["#00427d", "#d6acd1", "#e65100"]
     var randomColor = "#000000"
 
     if (colorsUsed.length < 3) {

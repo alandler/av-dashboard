@@ -14,12 +14,12 @@ function writeDot(){
     //Download text file
     var a = document.createElement("a")
     a.setAttribute("href", 'data:text/plain;charset=utf-8,' + encodeURIComponent(diGraph))
-    a.setAttribute("download", "expert.dotfile")
+    a.setAttribute("download", "expert.dot")
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    download("expert.dotfile", "Downloading expert decision tree.")
+    download("expert.dot", "Downloading expert decision tree.")
 }
 
 function writeChildren(nodeID){

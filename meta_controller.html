@@ -162,7 +162,9 @@
     const inputFileDiv = document.getElementById("file-selector-1")
     inputFileDiv.addEventListener('input', (e) => handleDotfileUpload(e.target.files[0], getNextTreeID())) //e.target.id.substring(14)
     // var lastID = Object.keys(trees) == undefined ? 1 : Math.max(Object.keys(trees))
-
+    window.onbeforeunload = function(){
+        sessionStorage.setItem("metaController", JSON.stringify(mainTree))
+};
 
     // ************** Label the meta controller, set images *****************
     document.getElementById("intersectionLabel").innerHTML = "Meta Controller : Intersection " + sessionStorage.getItem("intersectionID") + " : " + sessionStorage.getItem("intersectionName")
