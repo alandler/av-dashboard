@@ -154,10 +154,14 @@
         width = 1020 - margin.right - margin.left,
         height = 2000 - margin.top - margin.bottom;
 
-    instantiateSVG(false)
-    drawTree()
+    // instantiateSVG(false)
+    // drawTree()
 
     function approveChange(e) {
+        log1expanded = false
+        log2expanded = false
+        log3expanded = false
+        collapseAll()
         e.parentNode.parentNode.remove()
         alert("Added to controller.")
 
@@ -270,16 +274,22 @@
 
     function collapseAll(){
         if (log1expanded==true){
+            if (document.getElementById("log1")!=null){
         document.getElementById("log1").nextSibling.remove()
         log1expanded=false
+            }
         }
         if (log2expanded==true){
+            if (document.getElementById("log2")!=null){
         document.getElementById("log2").nextSibling.remove()
         log2expanded=false
+            }
         }
         if (log3expanded==true){
+            if (document.getElementById("log3")!=null){
         document.getElementById("log3").nextSibling.remove()
         log3expanded=false
+            }
         }
         removeImage()
     }
@@ -289,7 +299,5 @@
     }
 
 </script>
-
-<script src="scripts/tests.js"></script>
 
 </html>
