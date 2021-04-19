@@ -65,6 +65,9 @@ function addLeaf(e, nodeID = rightClickNode.id, nodeColor = "#999999", expertID 
         let prevID = getNodeMaxID(tree["nodes"])
         let newID = prevID + 1
         // addExpert = parseSessionStorage("addExpert")
+        if (addExpert ==undefined ) {
+            addExpert = false;
+        }
         console.log(window.location.href)
         console.log("add Expert:" + addExpert)
         expertTree = parseSessionStorage("expertTree")
