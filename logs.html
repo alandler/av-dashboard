@@ -158,10 +158,10 @@
     // drawTree()
 
     function approveChange(e) {
+        collapseAll()
         log1expanded = false
         log2expanded = false
         log3expanded = false
-        collapseAll()
         e.parentNode.parentNode.remove()
         alert("Added to controller.")
 
