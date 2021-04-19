@@ -16,6 +16,8 @@ var drag = d3.behavior.drag()
         var nearNode = nearestNode(d.x, d.y)
         console.log("dragged" + nearNode)
         console.log(JSON.stringify(d))
+        sessionStorage.setItem("addExpert", true)
+        addExpert = true
         if (isExpertIDInMainTree(d["id"]) == true) {
             alert("That expert is already in the tree. To change its location, remove it and drag again.")
         } else if (isNodeIDAnExpert(nearNode) == true) {
