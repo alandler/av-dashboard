@@ -150,6 +150,18 @@
     sessionStorage.setItem("metaController", JSON.stringify(mainTree))
     sessionStorage.setItem("trees", JSON.stringify(trees))
     sessionStorage.setItem("colorsUsed", JSON.stringify(colorsUsed))
+
+
+    // Sample axios request
+    axios.get('https://cat-fact.herokuapp.com/facts')
+  .then((response) => {
+    console.log("AXIOS RESPNONSE")
+    console.log(response.data);
+    console.log(response.status);
+    console.log(response.statusText);
+    console.log(response.headers);
+    console.log(response.config);
+  });
 </script>
 
 </html>
